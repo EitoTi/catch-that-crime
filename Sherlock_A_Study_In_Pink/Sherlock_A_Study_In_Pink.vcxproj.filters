@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="ArrayMovingObject">
+      <UniqueIdentifier>{40513be8-dfea-4fdb-853a-5e6e0183bcb8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Configuration">
+      <UniqueIdentifier>{06c2e8ea-e8ab-4b89-aba2-30a2708c80d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MapElement">
+      <UniqueIdentifier>{1e7c17f7-bbe6-4273-98e3-79da0bc2bcb0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Map">
+      <UniqueIdentifier>{6dbd9c10-96a6-495b-8969-e2fbd30219fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MovingObject">
+      <UniqueIdentifier>{1edd384a-55af-42bc-ae2f-c6211d07c406}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Position">
+      <UniqueIdentifier>{3186c1c8-f5b6-4be7-96cc-396e570f4a60}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BaseItem">
+      <UniqueIdentifier>{4b5a00ab-7fa8-44c8-bebf-03d87e0a10e2}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="XuLyArrayMovingObject.cpp">
+      <Filter>ArrayMovingObject</Filter>
+    </ClCompile>
+    <ClCompile Include="XuLyConfiguration.cpp">
+      <Filter>Configuration</Filter>
+    </ClCompile>
+    <ClCompile Include="XuLyMapElement.cpp">
+      <Filter>MapElement</Filter>
+    </ClCompile>
+    <ClCompile Include="XuLyMap.cpp">
+      <Filter>Map</Filter>
+    </ClCompile>
+    <ClCompile Include="XuLyMovingObject.cpp">
+      <Filter>MovingObject</Filter>
+    </ClCompile>
+    <ClCompile Include="XuLyPosition.cpp">
+      <Filter>Position</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="thuvien.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="arrayMovingObject.h">
+      <Filter>ArrayMovingObject</Filter>
+    </ClInclude>
+    <ClInclude Include="configuration.h">
+      <Filter>Configuration</Filter>
+    </ClInclude>
+    <ClInclude Include="mapElement.h">
+      <Filter>MapElement</Filter>
+    </ClInclude>
+    <ClInclude Include="map.h">
+      <Filter>Map</Filter>
+    </ClInclude>
+    <ClInclude Include="movingObject.h">
+      <Filter>MovingObject</Filter>
+    </ClInclude>
+    <ClInclude Include="position.h">
+      <Filter>Position</Filter>
+    </ClInclude>
+    <ClInclude Include="baseItem.h">
+      <Filter>BaseItem</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
