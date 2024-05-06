@@ -46,12 +46,6 @@ public:
         arr_mv_objs->add(sherlock);
         arr_mv_objs->add(watson);
         cout << arr_mv_objs->str() << endl;
-
-        delete arr_mv_objs;
-        delete sherlock;
-        delete watson;
-        delete criminal;
-        delete map;
     }
 
     static void satc_02() {
@@ -94,9 +88,9 @@ public:
 
 int main()
 {
-    //TestStudyInPink::satc_01();
+    TestStudyInPink::satc_01();
     TestStudyInPink::satc_02();
-    //TestStudyInPink::satc_03();
+    TestStudyInPink::satc_03();
 
     return 0;
 }
