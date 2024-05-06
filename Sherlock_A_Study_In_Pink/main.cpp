@@ -1,4 +1,9 @@
-#include "studyinpink.h"
+#include "thuvien.h"
+#include "configuration.h"
+#include "position.h"
+#include "movingObject.h"
+#include "map.h"
+#include "arrayMovingObject.h"
 
 void g_satc_02() { // global
     cout << "----- Sample Testcase 02 -----" << endl;
