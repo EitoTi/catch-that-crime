@@ -718,3 +718,63 @@ RobotType RobotS::getType() const
 {
 	return S;
 }
+
+RobotW::RobotW(int index, const Position& init_pos, Map* map, Criminal* criminal, Watson* watson) : Robot(index, init_pos, map, "RobotW"), criminal(criminal), watson(watson)
+{
+	this->setRobotType(W);
+}
+RobotW::~RobotW()
+{
+	delete RobotW::criminal;
+	delete RobotW::watson;
+	criminal = NULL;
+	watson = NULL;
+}
+Position RobotW::getNextPosition()
+{
+	Position currentPos = this->pos;
+	Position watsonPos = watson->getCurrentPosition();
+
+	// Define the four possible next positions
+	Position upPos(currentPos.getRow() - 1, currentPos.getCol());
+	Position rightPos(currentPos.getRow(), currentPos.getCol() + 1);
+	Position downPos(currentPos.getRow() + 1, currentPos.getCol());
+	Position leftPos(currentPos.getRow(), currentPos.getCol() - 1);
+
+	// Calculate the Manhattan distance to Sherlock for each possible next position
+	int upDist = ManhattanDistance(upPos, watsonPos);
+	int rightDist = ManhattanDistance(rightPos, watsonPos);
+	int downDist = ManhattanDistance(downPos, watsonPos);
+	int leftDist = ManhattanDistance(leftPos, watsonPos);
+
+	// Find the minimum distance
+	int minDist = min(min(upDist, rightDist), min(downDist, leftDist));
+
+	// Choose the next position based on the minimum distance and the clockwise order
+	if (upDist == minDist)
+		return upPos;
+	else if (rightDist == minDist)
+		return rightPos;
+	else if (downDist == minDist)
+		return downPos;
+	else // leftDist == minDist
+		return leftPos;
+}
+void RobotW::move()
+{
+	Position nextPos = getNextPosition();
+	if ((nextPos.getRow() != Position::getNPos().getRow()) && (nextPos.getCol() != Position::getNPos().getCol()))
+		this->pos = getNextPosition();
+}
+string RobotW::str() const
+{
+	return "Robot[pos=" + this->pos.str() + ";type=" + ToString(this->getType()) + ";dist=" + to_string(ManhattanDistance(this->pos, watson->getCurrentPosition())) + "]";
+}
+string RobotW::getName() const
+{
+	return name;
+}
+RobotType RobotW::getType() const
+{
+	return W;
+}

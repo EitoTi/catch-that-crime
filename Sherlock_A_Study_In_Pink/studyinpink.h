@@ -305,4 +305,20 @@ public:
 	RobotType getType() const;
 };
 
+class RobotW : public Robot
+{
+private:
+	Criminal* criminal;
+	Watson* watson;
+public:
+	RobotW(int, const Position&, Map*, Criminal*, Watson*);
+	~RobotW();
+	Position getNextPosition();
+	void move();
+	string str() const;
+
+	string getName() const;
+	RobotType getType() const;
+};
+
 #endif // !_STUDYINPINK
