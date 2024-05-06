@@ -132,7 +132,8 @@ bool Map::isValid(const Position& pos, MovingObject* mv_obj) const
 			return true;
 		else if (mv_obj->getName() == "Watson")
 		{
-			if (mv_obj->getExp() > fakewall->getReqExp())
+			Watson* watson = (Watson*)mv_obj;
+			if (watson->getExp() > fakewall->getReqExp())
 				return true;
 			return false;
 		}
@@ -420,59 +421,6 @@ int Criminal::getExp() const
 	return exp;
 }
 
-Robot::Robot(int index, const Position pos, Map* map, const string& name) : MovingObject(index, pos, map, name), robot_type(C), item(NULL) {}
-Robot::~Robot()
-{
-	delete item;
-	item = NULL;
-}
-int Robot::getDistance(Sherlock* sherlock) const
-{
-	return ManhattanDistance(this->pos, sherlock->getCurrentPosition());
-}
-int Robot::getDistance(Watson* watson) const
-{
-	return ManhattanDistance(this->pos, watson->getCurrentPosition());
-}
-RobotType Robot::getType() const
-{
-	return robot_type;
-}
-
-RobotC::RobotC(int index, const Position& init_pos, Map* map, Criminal* criminal) : Robot(index, init_pos, map, "RobotC"), criminal(criminal) {}
-RobotC::~RobotC()
-{
-	delete RobotC::criminal;
-	criminal = NULL;
-}
-Position RobotC::getNextPosition()
-{
-	Position nextPos = criminal->getCurrentPosition();
-	return (map->isValid(nextPos, this)) ? nextPos : Position::getNPos();
-}
-void RobotC::move()
-{
-	Position nextPos = getNextPosition();
-	if ((nextPos.getRow() != Position::getNPos().getRow()) && (nextPos.getCol() != Position::getNPos().getCol()))
-		this->pos = getNextPosition();
-}
-string RobotC::str() const
-{
-	return "Robot[pos=" + this->pos.str() + ";type=" + ToString(C) + "]";
-}
-string RobotC::getName() const
-{
-	return name;
-}
-int RobotC::getExp() const
-{
-	return 100;
-}
-RobotType RobotC::getType() const
-{
-	return C;
-}
-
 ArrayMovingObject::ArrayMovingObject(int capacity) : capacity(capacity), count(0)
 {
 	arr_mv_objs = new MovingObject * [capacity];
@@ -652,4 +600,121 @@ string Configuration::str() const
 	result += "NUM_STEPS=" + to_string(num_steps) + "\n";
 	result += "]";
 	return result;
+}
+
+Robot::Robot(int index, const Position pos, Map* map, const string& name) : MovingObject(index, pos, map, name), robot_type(C), item(NULL) {}
+Robot::~Robot()
+{
+	delete item;
+	item = NULL;
+}
+int Robot::getDistance(Sherlock* sherlock) const
+{
+	return ManhattanDistance(this->pos, sherlock->getCurrentPosition());
+}
+int Robot::getDistance(Watson* watson) const
+{
+	return ManhattanDistance(this->pos, watson->getCurrentPosition());
+}
+RobotType Robot::getType() const
+{
+	return robot_type;
+}
+void Robot::setRobotType(RobotType robot_type)
+{
+	this->robot_type = robot_type;
+}
+
+RobotC::RobotC(int index, const Position& init_pos, Map* map, Criminal* criminal) : Robot(index, init_pos, map, "RobotC"), criminal(criminal) 
+{
+	this->setRobotType(C); 
+}
+RobotC::~RobotC()
+{
+	delete RobotC::criminal;
+	criminal = NULL;
+}
+Position RobotC::getNextPosition()
+{
+	Position nextPos = criminal->getCurrentPosition();
+	return (map->isValid(nextPos, this)) ? nextPos : Position::getNPos();
+}
+void RobotC::move()
+{
+	Position nextPos = getNextPosition();
+	if ((nextPos.getRow() != Position::getNPos().getRow()) && (nextPos.getCol() != Position::getNPos().getCol()))
+		this->pos = getNextPosition();
+}
+string RobotC::str() const
+{
+	return "Robot[pos=" + this->pos.str() + ";type=" + ToString(this->getType()) + "]";
+}
+string RobotC::getName() const
+{
+	return name;
+}
+RobotType RobotC::getType() const
+{
+	return C;
+}
+
+RobotS::RobotS(int index, const Position& init_pos, Map* map, Criminal* criminal, Sherlock* sherlock) : Robot(index, init_pos, map, "RobotS"), criminal(criminal), sherlock(sherlock)
+{
+	this->setRobotType(S);
+}
+RobotS::~RobotS()
+{
+	delete RobotS::criminal;
+	delete RobotS::sherlock;
+	criminal = NULL;
+	sherlock = NULL;
+}
+Position RobotS::getNextPosition()
+{
+	Position currentPos = this->pos;
+	Position sherlockPos = sherlock->getCurrentPosition();
+
+	// Define the four possible next positions
+	Position upPos(currentPos.getRow() - 1, currentPos.getCol());
+	Position rightPos(currentPos.getRow(), currentPos.getCol() + 1);
+	Position downPos(currentPos.getRow() + 1, currentPos.getCol());
+	Position leftPos(currentPos.getRow(), currentPos.getCol() - 1);
+
+	// Calculate the Manhattan distance to Sherlock for each possible next position
+	int upDist = ManhattanDistance(upPos, sherlockPos);
+	int rightDist = ManhattanDistance(rightPos, sherlockPos);
+	int downDist = ManhattanDistance(downPos, sherlockPos);
+	int leftDist = ManhattanDistance(leftPos, sherlockPos);
+
+	// Find the minimum distance
+	int minDist = min(min(upDist, rightDist), min(downDist, leftDist));
+
+	// Choose the next position based on the minimum distance and the clockwise order
+	if (upDist == minDist)
+		return upPos;
+	else if (rightDist == minDist)
+		return rightPos;
+	else if (downDist == minDist)
+		return downPos;
+	else // leftDist == minDist
+		return leftPos;
+}
+void RobotS::move()
+{
+	Position nextPos = getNextPosition();
+	if ((nextPos.getRow() != Position::getNPos().getRow()) && (nextPos.getCol() != Position::getNPos().getCol()))
+		this->pos = getNextPosition();
+}
+string RobotS::str() const
+{
+	return "Robot[pos=" + this->pos.str() + ";type=" + ToString(this->getType()) + ";dist=" + to_string(ManhattanDistance(this->pos, sherlock->getCurrentPosition())) + "]";
+}
+
+string RobotS::getName() const
+{
+	return name;
+}
+RobotType RobotS::getType() const
+{
+	return S;
 }

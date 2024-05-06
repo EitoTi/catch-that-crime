@@ -130,9 +130,7 @@ public:
 	Position getCurrentPosition() const;
 	virtual void move() = 0;
 	virtual string str() const = 0;
-
 	virtual string getName() const = 0;
-	virtual int getExp() const = 0;
 };
 
 class Character : public MovingObject
@@ -145,6 +143,7 @@ public:
 	virtual ~Character();
 
 	virtual int getHp() const = 0;
+	virtual int getExp() const = 0;
 };
 
 class Sherlock : public Character
@@ -197,52 +196,6 @@ public:
 	int getExp() const;
 };
 
-class Robot : public MovingObject
-{
-protected:
-	RobotType robot_type;
-	BaseItem* item;
-
-	const string ToString(RobotType robot_type) const
-	{
-		switch (robot_type)
-		{
-		case C:
-			return "C";
-		case S:
-			return "S";
-		case W:
-			return "W";
-		case SW:
-			return "SW";
-		default:
-			return "[Unknown Robot Type]";
-		}
-	}
-public:
-	Robot(int, const Position, Map*, const string&);
-	virtual ~Robot();
-	int getDistance(Sherlock*) const;
-	int getDistance(Watson*) const;
-	virtual RobotType getType() const;
-};
-
-class RobotC : public Robot
-{
-private:
-	Criminal* criminal;
-public:
-	RobotC(int, const Position&, Map*, Criminal*);
-	~RobotC();
-	Position getNextPosition();
-	void move();
-	string str() const;
-
-	string getName() const;
-	int getExp() const;
-	RobotType getType() const;
-};
-
 class ArrayMovingObject
 {
 private:
@@ -286,6 +239,70 @@ class BaseItem
 {
 public:
 
+};
+
+
+class Robot : public MovingObject
+{
+protected:
+	RobotType robot_type;
+	BaseItem* item;
+
+	const string ToString(RobotType robot_type) const
+	{
+		switch (robot_type)
+		{
+		case C:
+			return "C";
+		case S:
+			return "S";
+		case W:
+			return "W";
+		case SW:
+			return "SW";
+		default:
+			return "[Unknown Robot Type]";
+		}
+	}
+public:
+	Robot(int, const Position, Map*, const string&);
+	virtual ~Robot();
+	int getDistance(Sherlock*) const;
+	int getDistance(Watson*) const;
+	virtual RobotType getType() const;
+
+	void setRobotType(RobotType);
+};
+
+class RobotC : public Robot
+{
+private:
+	Criminal* criminal;
+public:
+	RobotC(int, const Position&, Map*, Criminal*);
+	~RobotC();
+	Position getNextPosition();
+	void move();
+	string str() const;
+
+	string getName() const;
+	RobotType getType() const;
+};
+
+class RobotS: public Robot
+{
+private:
+	Criminal* criminal;
+	Sherlock* sherlock;
+public:
+	RobotS(int, const Position&, Map*, Criminal*, Sherlock*);
+	~RobotS();
+	Position getNextPosition();
+	void move();
+	string str() const;
+
+	string getName() const;
+	RobotType getType() const;
 };
 
 #endif // !_STUDYINPINK
