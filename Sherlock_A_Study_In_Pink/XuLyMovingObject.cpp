@@ -30,6 +30,20 @@ Character::Character(int index, const Position pos, Map* map, const string& name
 		this->exp = exp;
 }
 Character::~Character() {}
+void Character::increaseExp(int percentage)
+{
+	int increase = this->exp * percentage / 100;
+	this->exp += increase;
+}
+void Character::increaseHp(int percentage)
+{
+	int increase = this->hp * percentage / 100;
+	this->hp += increase;
+}
+void Character::decreaseExp(int percentage)
+{
+	this->exp -= 50;
+}
 
 Sherlock::Sherlock(int index, const string& moving_rule, const Position& init_pos, Map* map, int init_hp, int init_exp) : moving_rule(moving_rule), Character(index, init_pos, map, "Sherlock", init_hp, init_exp)
 {

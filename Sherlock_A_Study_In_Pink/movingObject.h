@@ -35,6 +35,10 @@ public:
 
 	virtual int getHp() const = 0;
 	virtual int getExp() const = 0;
+
+	void increaseExp(int);
+	void increaseHp(int);
+	void decreaseExp(int);
 };
 
 class Sherlock : public Character
