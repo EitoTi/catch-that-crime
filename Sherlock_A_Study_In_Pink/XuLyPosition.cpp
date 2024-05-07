@@ -38,3 +38,7 @@ const Position& Position::getNPos()
 {
 	return npos;
 }
+bool Position::operator!=(const Position& pos) const
+{
+	return ((this->getRow() != pos.getRow()) || (this->getCol() != pos.getCol())) ? true : false;
+}

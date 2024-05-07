@@ -18,5 +18,7 @@ public:
 	bool isEqual(int, int) const;
 
 	static const Position& getNPos();
+
+	bool operator!=(const Position&) const; // Operator Overload
 };
 #endif // !_POSITION

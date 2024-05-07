@@ -83,7 +83,7 @@ void Sherlock::move()
 {
 	Position next_pos = getNextPosition();
 
-	if (((next_pos.getRow() != Position::getNPos().getRow()) || (next_pos.getCol() != Position::getNPos().getCol())))
+	if (next_pos != Position::getNPos())
 		pos = next_pos;
 
 	// pos khong doi --> Sherlock dung im
@@ -158,7 +158,7 @@ void Watson::move()
 {
 	Position next_pos = getNextPosition();
 
-	if (((next_pos.getRow() != Position::getNPos().getRow()) || (next_pos.getCol() != Position::getNPos().getCol())))
+	if (next_pos != Position::getNPos())
 		pos = next_pos;
 
 	// pos khong doi --> Watson dung im
@@ -258,7 +258,7 @@ void Criminal::move()
 {
 	Position next_pos = getNextPosition();
 
-	if (((next_pos.getRow() != Position::getNPos().getRow()) || (next_pos.getCol() != Position::getNPos().getCol())))
+	if (next_pos != Position::getNPos())
 		pos = next_pos;
 
 	// pos khong doi --> Criminal dung im
@@ -320,7 +320,7 @@ Position RobotC::getNextPosition()
 void RobotC::move()
 {
 	Position nextPos = getNextPosition();
-	if ((nextPos.getRow() != Position::getNPos().getRow()) && (nextPos.getCol() != Position::getNPos().getCol()))
+	if (nextPos != Position::getNPos())
 		this->pos = getNextPosition();
 }
 string RobotC::str() const
@@ -384,7 +384,7 @@ Position RobotS::getNextPosition()
 void RobotS::move()
 {
 	Position nextPos = getNextPosition();
-	if ((nextPos.getRow() != Position::getNPos().getRow()) && (nextPos.getCol() != Position::getNPos().getCol()))
+	if (nextPos != Position::getNPos())
 		this->pos = getNextPosition();
 }
 string RobotS::str() const
@@ -449,7 +449,7 @@ Position RobotW::getNextPosition()
 void RobotW::move()
 {
 	Position nextPos = getNextPosition();
-	if ((nextPos.getRow() != Position::getNPos().getRow()) && (nextPos.getCol() != Position::getNPos().getCol()))
+	if (nextPos != Position::getNPos())
 		this->pos = getNextPosition();
 }
 string RobotW::str() const
@@ -532,7 +532,7 @@ Position RobotSW::getNextPosition()
 void RobotSW::move()
 {
 	Position nextPos = getNextPosition();
-	if ((nextPos.getRow() != Position::getNPos().getRow()) && (nextPos.getCol() != Position::getNPos().getCol()))
+	if (nextPos != Position::getNPos())
 		this->pos = getNextPosition();
 }
 string RobotSW::str() const
