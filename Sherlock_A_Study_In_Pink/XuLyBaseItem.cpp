@@ -39,6 +39,7 @@ void ExcemptionCard::use(Character* character, Robot* robot)
     character->noModifyCharacterStats = true;
 }
 
+PassingCard::PassingCard(const string& challenge): challenge(challenge) {}
 bool PassingCard::canUse(Character* character, Robot* robot)
 {
     return ((character->getName() == "Watson") && (character->getHp() % 2 == 0)) ? true : false;
