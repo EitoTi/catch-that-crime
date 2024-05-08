@@ -30,26 +30,11 @@ Character::Character(int index, const Position pos, Map* map, const string& name
 		this->exp = exp;
 }
 Character::~Character() {}
-void Character::increaseExp(int percentage)
-{
-	int increase = this->exp * percentage / 100;
-	this->exp += increase;
-}
-void Character::increaseHp(int percentage)
-{
-	int increase = this->hp * percentage / 100;
-	this->hp += increase;
-}
-void Character::decreaseExp(int percentage)
-{
-	this->exp -= 50;
-}
 
 void Character::setHp(int hp)
 {
     this->hp = hp;
 }
-
 void Character::setExp(int exp)
 {
     this->exp = exp;
@@ -62,7 +47,6 @@ void Character::roundHp()
     else if (hp < 0)
         hp = 0;
 }
-
 void Character::roundExp()
 {
     if (exp > 900)

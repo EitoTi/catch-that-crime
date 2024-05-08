@@ -31,7 +31,10 @@ protected:
 	int hp;
 	int exp;
 public:
-	bool god = false, inner_main_character = false;
+	// noModifyCharacterStats -> cannot solve challenges, character stats is not modified
+	// passChallenge -> no need to take the challenge 
+	bool noModifyCharacterStats = false, passChallenge = false;
+
 	Character(int, const Position, Map*, const string&, int, int);
 	virtual ~Character();
 
