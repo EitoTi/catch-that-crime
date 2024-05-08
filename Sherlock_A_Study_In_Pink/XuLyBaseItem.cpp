@@ -1,47 +1,70 @@
 #include "baseItem.h"
 
-bool MagicBook::canUse(Character* obj, Robot* robot)
+bool MagicBook::canUse(Character *character, Robot *robot)
 {
-	return (obj->getExp() <= 350) ? true : false;
-}
-void MagicBook::use(Character* obj, Robot* robot)
-{
-	obj->increaseExp(25);
+    if (character->getExp() <= 350)
+        return true;
+    return false;
 }
 
-bool EnergyDrink::canUse(Character* obj, Robot* robot)
+void MagicBook::use(Character *character, Robot *robot)
 {
-	return (obj->getHp() <= 100) ? true : false;
-}
-void EnergyDrink::use(Character* obj, Robot* robot)
-{
-	obj->increaseHp(20);
+    character->setExp(character->getExp() * 1.25);
+    character->roundExp();
 }
 
-bool FirstAid::canUse(Character* obj, Robot* robot)
+bool EnergyDrink::canUse(Character *character, Robot *robot)
 {
-	return ((obj->getExp() <= 350) || (obj->getHp() <= 100)) ? true : false;
-}
-void FirstAid::use(Character* obj, Robot* robot)
-{
-	obj->increaseHp(50);
+    if (character->getHp() <= 100)
+        return true;
+    return false;
 }
 
-bool ExcemptionCard::canUse(Character* obj, Robot* robot)
+void EnergyDrink::use(Character *character, Robot *robot)
 {
-	return ((obj->getName() == "Sherlock") && (obj->getHp() % 2 != 0)) ? true : false;
-}
-void ExcemptionCard::use(Character* obj, Robot* robot)
-{
-
+    character->setHp(character->getHp() * 1.20);
+    character->roundHp();
 }
 
-PassingCard::PassingCard(const string& challenge) : challenge(challenge) {}
-bool PassingCard::canUse(Character* obj, Robot* robot)
+bool FirstAid::canUse(Character *character, Robot *robot)
 {
-	return ((obj->getName() == "Watson") && (obj->getHp() % 2 == 0)) ? true : false;
+    if ((character->getHp() <= 100) || (character->getExp() <= 350))
+        return true;
+    return false;
 }
-void PassingCard::use(Character* obj, Robot* robot)
-{
 
+void FirstAid::use(Character *character, Robot *robot)
+{
+    character->setHp(character->getHp() * 1.50);
+    character->roundHp();
+}
+
+bool ExcemptionCard::canUse(Character *character, Robot *robot)
+{
+    if ((character->getName() == "Sherlock") && (character->getHp() % 2 == 1))
+        return true;
+    return false;
+}
+
+void ExcemptionCard::use(Character *character, Robot *robot)
+{
+    character->god = true;
+}
+
+bool PassingCard::canUse(Character *character, Robot *robot)
+{
+    if ((character->getName() == "Watson") && (character->getHp() % 2 == 0))
+        return true;
+    return false;
+}
+
+void PassingCard::use(Character *character, Robot *robot)
+{
+    if ((challenge == "all") || (challenge == robot->getName()))
+        character->inner_main_character = true;
+    else
+    {
+        character->setExp(character->getExp() - 50);
+        character->inner_main_character = true;
+    }
 }
