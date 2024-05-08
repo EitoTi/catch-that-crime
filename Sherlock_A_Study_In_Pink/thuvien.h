@@ -67,5 +67,3 @@ class StudyInPinkProgram;
 class TestStudyInPink;
 
 #endif // !_THUVIEN
-
-// Hello Cuong dep trai!
