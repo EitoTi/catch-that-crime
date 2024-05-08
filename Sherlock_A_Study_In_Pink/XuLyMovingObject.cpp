@@ -45,6 +45,32 @@ void Character::decreaseExp(int percentage)
 	this->exp -= 50;
 }
 
+void Character::setHp(int hp)
+{
+    this->hp = hp;
+}
+
+void Character::setExp(int exp)
+{
+    this->exp = exp;
+}
+
+void Character::roundHp()
+{
+    if (hp > 500)
+        hp = 500;
+    else if (hp < 0)
+        hp = 0;
+}
+
+void Character::roundExp()
+{
+    if (exp > 900)
+        exp = 900;
+    else if (exp < 0)
+        exp = 0;
+}
+
 Sherlock::Sherlock(int index, const string& moving_rule, const Position& init_pos, Map* map, int init_hp, int init_exp) : moving_rule(moving_rule), Character(index, init_pos, map, "Sherlock", init_hp, init_exp)
 {
 	// Xu ly hp
