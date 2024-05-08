@@ -31,15 +31,18 @@ protected:
 	int hp;
 	int exp;
 public:
+	bool god = false, inner_main_character = false;
 	Character(int, const Position, Map*, const string&, int, int);
 	virtual ~Character();
 
 	virtual int getHp() const = 0;
 	virtual int getExp() const = 0;
 
-	void increaseExp(int);
-	void increaseHp(int);
-	void decreaseExp(int);
+	void setHp(int);
+	void setExp(int);
+
+	void roundHp();
+	void roundExp();
 
 	virtual Position getNextPosition() = 0;
 	virtual void move() = 0;
