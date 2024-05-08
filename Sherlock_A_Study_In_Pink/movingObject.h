@@ -17,8 +17,9 @@ protected:
 public:
 	MovingObject(int, const Position, Map*, const string& name = "");
 	virtual ~MovingObject();
-	virtual Position getNextPosition() = 0;
 	Position getCurrentPosition() const;
+
+	virtual Position getNextPosition() = 0;
 	virtual void move() = 0;
 	virtual string str() const = 0;
 	virtual string getName() const = 0;
@@ -39,6 +40,11 @@ public:
 	void increaseExp(int);
 	void increaseHp(int);
 	void decreaseExp(int);
+
+	virtual Position getNextPosition() = 0;
+	virtual void move() = 0;
+	virtual string str() const = 0;
+	virtual string getName() const = 0;
 };
 
 class Sherlock : public Character
@@ -48,10 +54,10 @@ private:
 	int moving_rule_index = 0;
 public:
 	Sherlock(int, const string&, const Position&, Map*, int, int);
+
 	Position getNextPosition();
 	void move();
 	string str() const;
-
 	string getName() const;
 	int getHp() const;
 	int getExp() const;
@@ -64,10 +70,10 @@ private:
 	int moving_rule_index = 0;
 public:
 	Watson(int, const string&, const Position&, Map*, int, int);
+
 	Position getNextPosition();
 	void move();
 	string str() const;
-
 	string getName() const;
 	int getHp() const;
 	int getExp() const;
@@ -82,10 +88,10 @@ private:
 	Watson* watson;
 public:
 	Criminal(int, const Position&, Map*, Sherlock*, Watson*);
+
 	Position getNextPosition();
 	void move();
 	string str() const;
-
 	string getName() const;
 	int getHp() const;
 	int getExp() const;
@@ -121,6 +127,11 @@ public:
 	virtual RobotType getType() const;
 
 	void setRobotType(RobotType);
+
+	virtual Position getNextPosition() = 0;
+	virtual void move() = 0;
+	virtual string str() const = 0;
+	virtual string getName() const = 0;
 };
 
 class RobotC : public Robot
@@ -130,12 +141,13 @@ private:
 public:
 	RobotC(int, const Position&, Map*, Criminal*);
 	~RobotC();
+
+	RobotType getType() const;
+
 	Position getNextPosition();
 	void move();
 	string str() const;
-
 	string getName() const;
-	RobotType getType() const;
 };
 
 class RobotS : public Robot
@@ -146,12 +158,13 @@ private:
 public:
 	RobotS(int, const Position&, Map*, Criminal*, Sherlock*);
 	~RobotS();
+
+	RobotType getType() const;
+
 	Position getNextPosition();
 	void move();
 	string str() const;
-
 	string getName() const;
-	RobotType getType() const;
 };
 
 class RobotW : public Robot
@@ -162,12 +175,13 @@ private:
 public:
 	RobotW(int, const Position&, Map*, Criminal*, Watson*);
 	~RobotW();
+
+	RobotType getType() const;
+
 	Position getNextPosition();
 	void move();
 	string str() const;
-
 	string getName() const;
-	RobotType getType() const;
 };
 
 class RobotSW : public Robot
@@ -179,11 +193,12 @@ private:
 public:
 	RobotSW(int, const Position&, Map*, Criminal*, Sherlock*, Watson*);
 	~RobotSW();
+
+	RobotType getType() const;
+
 	Position getNextPosition();
 	void move();
 	string str() const;
-
 	string getName() const;
-	RobotType getType() const;
 };
 #endif // !_MOVING_OBJECT
