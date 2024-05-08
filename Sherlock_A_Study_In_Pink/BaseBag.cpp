@@ -1,3 +1,10 @@
+struct object
+{
+    object(BaseItem *item) : item(item) {};
+    BaseItem *item;
+    object *next;
+};
+
 BaseBag::BaseBag() : head(nullptr) {}
 
 BaseItem* BaseBag::get()
