@@ -6,11 +6,7 @@ ArrayMovingObject::ArrayMovingObject(int capacity) : capacity(capacity), count(0
 }
 ArrayMovingObject::~ArrayMovingObject()
 {
-	for (int i = 0; i < count; ++i)
-		delete arr_mv_objs[i];
 	delete[] arr_mv_objs;
-	count = 0;
-	arr_mv_objs = NULL;
 }
 bool ArrayMovingObject::isFull() const
 {
