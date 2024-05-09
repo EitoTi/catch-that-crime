@@ -1,12 +1,15 @@
 #include "BaseBag.h"
 
-BaseBag::BaseBag(Character* character) : character(character), items_count(0) {}
+BaseBag::BaseBag(Character* character) : character(character), items_count(0) 
+{
+    for (int i = 0; i < 15; ++i)
+        items[i] = NULL;
+}
 bool BaseBag::insert(BaseItem* item)
 {
     if (items_count < 15)
     {
         addToHead(*this, item);
-        items_count++;
         return true;
     }
     return false;
@@ -57,14 +60,21 @@ BaseItem* BaseBag::get(ItemType item_type)
 }
 string BaseBag::str() const
 {
-    string result = "Bag[count=" + to_string(items_count) + ";";
-    for (int i = 0; i < items_count; ++i)
+    string result;
+    if (items_count != 0)
     {
-        result += ToString(items[i]->getItemType());
-        if (i < items_count - 1)
-            result += ",";
+        result = "Bag[count=" + to_string(items_count) + ";";
+        for (int i = 0; i < items_count; ++i)
+        {
+            result += ToString(items[i]->getItemType());
+            
+            if (i < items_count - 1)
+                result += ",";
+        }
+        result += "]";
     }
-    result += "]";
+    else
+        result = "Empty string!";
     return result;
 }
 
@@ -115,10 +125,9 @@ BaseItem* SherlockBag::get(ItemType item_type)
 }
 bool SherlockBag::insert(BaseItem *item)
 {   
-    if (items_count < SHERLOCK_BAG_MAX_ITEM)
+    if (this->items_count < SHERLOCK_BAG_MAX_ITEM)
     {
         addToHead(*this, item);
-        items_count++;
         return true;
     }
     return false;
@@ -171,10 +180,9 @@ BaseItem* WatsonBag::get(ItemType item_type)
 }
 bool WatsonBag::insert(BaseItem *item)
 {
-    if (items_count < WATSON_BAG_MAX_ITEM)
+    if (this->items_count < WATSON_BAG_MAX_ITEM)
     {
         addToHead(*this, item);
-        items_count++;
         return true;
     }
     return false;

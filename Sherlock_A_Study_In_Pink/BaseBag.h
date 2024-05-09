@@ -10,15 +10,23 @@ class BaseBag
 protected:
     Character* character;
 
-    BaseItem* items[15] = { NULL };
+    BaseItem* items[15];
     int items_count;
 
     void addToHead(BaseBag& baseBag, BaseItem* itemToAdd)
     {
-        for(int i = baseBag.items_count; i > 0; --i)
-            baseBag.items[i] = baseBag.items[i - 1];
-        baseBag.items_count++;
-        baseBag.items[0] = itemToAdd;
+        if (baseBag.items_count == 0)
+        {
+            baseBag.items[0] = itemToAdd;
+            items_count++;
+        }
+        else
+        {
+            for(int i = baseBag.items_count; i > 0; --i)
+                baseBag.items[i] = baseBag.items[i - 1];
+            baseBag.items_count++;
+            baseBag.items[0] = itemToAdd;
+        }
     }
     void deleteItemFromHead(BaseBag& baseBag)
     {
