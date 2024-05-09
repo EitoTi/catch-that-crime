@@ -1,97 +1,181 @@
-struct object
+#include "BaseBag.h"
+
+BaseBag::BaseBag(Character* character) : character(character), items_count(0) {}
+bool BaseBag::insert(BaseItem* item)
 {
-    object(BaseItem *item) : item(item) {};
-    BaseItem *item;
-    object *next;
-};
-
-BaseBag::BaseBag() : head(nullptr) {}
-
+    if (items_count < 15)
+    {
+        addToHead(*this, item);
+        items_count++;
+        return true;
+    }
+    return false;
+}
 BaseItem* BaseBag::get()
 {
-    object *current = head;
-    object *previous = nullptr;
-    while(current)
+    for (int i = 0; i < items_count; ++i)
     {
-        if((current->item->getType() == MAGIC_BOOK) || (current->item->getType() == ENERGY_DRINK) || (current->item->getType() == FIRST_AID))
+        if (items[i]->canUse(character, NULL) && (items[i]->getItemType() == MAGIC_BOOK || items[i]->getItemType() == ENERGY_DRINK || items[i]->getItemType() == FIRST_AID))
         {
-            if (previous)
-            {
-                object *temp = head;
-                previous->next = current->next;
-                head->next = current->next;
-                head = temp->next;
-                delete temp;
-            }
-            else
-                head = head->next;
-            return current->item;
-        }
-        previous = current;
-        current = current->next;
-    }
-}
+            BaseItem* takeOutItem = items[i];
 
+            // Swap takeOutItem with head item
+            if (i > 0)
+            {
+                items[i] = items[0];
+                items[0] = takeOutItem;
+            }
+
+            // Remove head item
+            deleteItemFromHead(*this);
+            return takeOutItem;
+        }
+    }
+    return NULL;
+}
 BaseItem* BaseBag::get(ItemType item_type)
 {
-    object *current = head;
-    object *previous = nullptr;
-    while (current)
+    for (int i = 0; i < items_count; ++i)
     {
-        if (current->item->getType() == item_type)
+        if (items[i]->canUse(character, NULL) && (items[i]->getItemType() == item_type))
         {
-            if (previous)
-            {
-                object *temp = head;
-                previous->next = head;
-                head->next = current->next;
-                head = temp->next;
-                delete temp;
-            }
-            else
-                head = head->next;
-            return current->item;
-        }
-        previous = current;
-        current = current->next;
-    }
-    return nullptr;
-}
+            BaseItem* takeOutItem = items[i];
 
+            // Swap takeOutItem with head item
+            if (i > 0)
+            {
+                items[i] = items[0];
+                items[0] = takeOutItem;
+            }
+
+            // Remove head item
+            deleteItemFromHead(*this);
+            return takeOutItem;
+        }
+    }
+    return NULL;
+}
 string BaseBag::str() const
 {
-    string result = "Bag[count=" + to_string(num_items) + ";";
-    result += enumItemToString(head->item->getType());
-    object *current = head->next;
-    while (current)
+    string result = "Bag[count=" + to_string(items_count) + ";";
+    for (int i = 0; i < items_count; ++i)
     {
-        result = result + "," + enumItemToString(current->item->getType());
-        current = current->next;
+        result += ToString(items[i]->getItemType());
+        if (i < items_count - 1)
+            result += ",";
     }
     result += "]";
     return result;
 }
 
-bool SherlockBag::insert(BaseItem *item)
+SherlockBag::SherlockBag(Sherlock* sherlock): BaseBag(sherlock) {}
+BaseItem* SherlockBag::get()
 {
-    if (num_items < 13)
+    for (int i = 0; i < items_count; ++i)
     {
-        object *new_object = new object(item);
-        new_object->next = head;
-        head = new_object;
+        if (items[i]->canUse(character, NULL) && (items[i]->getItemType() == MAGIC_BOOK || items[i]->getItemType() == ENERGY_DRINK || items[i]->getItemType() == FIRST_AID))
+        {
+            BaseItem* takeOutItem = items[i];
+
+            // Swap takeOutItem with head item
+            if (i > 0)
+            {
+                items[i] = items[0];
+                items[0] = takeOutItem;
+            }
+
+            // Remove head item
+            deleteItemFromHead(*this);
+            return takeOutItem;
+        }
+    }
+    return NULL;
+}
+BaseItem* SherlockBag::get(ItemType item_type)
+{
+    for (int i = 0; i < items_count; ++i)
+    {
+        if (items[i]->canUse(character, NULL) && (items[i]->getItemType() == item_type))
+        {
+            BaseItem* takeOutItem = items[i];
+
+            // Swap takeOutItem with head item
+            if (i > 0)
+            {
+                items[i] = items[0];
+                items[0] = takeOutItem;
+            }
+
+            // Remove head item
+            deleteItemFromHead(*this);
+            return takeOutItem;
+        }
+    }
+    return NULL;
+}
+bool SherlockBag::insert(BaseItem *item)
+{   
+    if (items_count < SHERLOCK_BAG_MAX_ITEM)
+    {
+        addToHead(*this, item);
+        items_count++;
         return true;
     }
-    return false;        
+    return false;
 }
 
+WatsonBag::WatsonBag(Watson* watson) : BaseBag(watson) {}
+BaseItem* WatsonBag::get()
+{
+    for (int i = 0; i < items_count; ++i)
+    {
+        if (items[i]->canUse(character, NULL) && (items[i]->getItemType() == MAGIC_BOOK || items[i]->getItemType() == ENERGY_DRINK || items[i]->getItemType() == FIRST_AID))
+        {
+            BaseItem* takeOutItem = items[i];
+
+            // Swap takeOutItem with head item
+            if (i > 0)
+            {
+                items[i] = items[0];
+                items[0] = takeOutItem;
+            }
+
+            // Remove head item
+            deleteItemFromHead(*this);
+            return takeOutItem;
+        }
+    }
+    return NULL;
+}
+BaseItem* WatsonBag::get(ItemType item_type)
+{
+    for (int i = 0; i < items_count; ++i)
+    {
+        if (items[i]->canUse(character, NULL) && (items[i]->getItemType() == item_type))
+        {
+            BaseItem* takeOutItem = items[i];
+
+            // Swap takeOutItem with head item
+            if (i > 0)
+            {
+                items[i] = items[0];
+                items[0] = takeOutItem;
+            }
+
+            // Remove head item
+            deleteItemFromHead(*this);
+            return takeOutItem;
+        }
+    }
+    return NULL;
+}
 bool WatsonBag::insert(BaseItem *item)
 {
-    if (num_items < 15)
+    if (items_count < WATSON_BAG_MAX_ITEM)
     {
-        object *new_object = new object(item);
-        new_object->next = head;
-        head = new_object;
+        addToHead(*this, item);
+        items_count++;
         return true;
     }
-    return false;        
+    return false;
 }
