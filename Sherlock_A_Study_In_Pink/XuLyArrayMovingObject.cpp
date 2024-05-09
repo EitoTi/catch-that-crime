@@ -31,3 +31,7 @@ string ArrayMovingObject::str() const
 	result += "]";
 	return result;
 }
+int ArrayMovingObject::getCount()
+{
+	return count;
+}
