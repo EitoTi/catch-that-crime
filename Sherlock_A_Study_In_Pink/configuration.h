@@ -24,5 +24,7 @@ public:
 	Configuration(const string&);
 	~Configuration();
 	string str() const;
+
+	friend class StudyInPinkProgram; // Access properties from class StudyInPinkProgram
 };
 #endif // !_CONFIGURATION

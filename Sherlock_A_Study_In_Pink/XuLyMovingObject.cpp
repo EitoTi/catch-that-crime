@@ -205,7 +205,7 @@ int Watson::getExp() const
 	return exp;
 }
 
-Criminal::Criminal(int index, const Position& init_pos, Map* map, Sherlock* sherlock, Watson* watson) : sherlock(sherlock), watson(watson), Character(index, init_pos, map, "Criminal", 0, 0) {}
+Criminal::Criminal(int index, const Position& init_pos, Map* map, Sherlock* sherlock, Watson* watson) : sherlock(sherlock), watson(watson), Character(index, init_pos, map, "Criminal", 0, 0), num_steps(0) {}
 Position Criminal::getNextPosition()
 {
 	Position currentPos = getCurrentPosition();
@@ -283,7 +283,11 @@ void Criminal::move()
 	Position next_pos = getNextPosition();
 
 	if (next_pos != Position::getNPos())
+	{
+		previous_pos = pos;
 		pos = next_pos;
+		num_steps++;
+	}
 
 	// pos khong doi --> Criminal dung im
 }
@@ -303,7 +307,20 @@ int Criminal::getExp() const
 {
 	return exp;
 }
+Position Criminal::getPreviousPosition() const
+{
+	return previous_pos;
+}
+int Criminal::getCriminalNumSteps() const
+{
+	return num_steps;
+}
+void Criminal::setCriminalNumSteps(int steps)
+{
+	num_steps = steps;
+}
 
+bool Robot::first_robot = true;
 Robot::Robot(int index, const Position pos, Map* map, const string& name) : MovingObject(index, pos, map, name), robot_type(C), item(NULL) {}
 Robot::~Robot()
 {
@@ -325,6 +342,22 @@ RobotType Robot::getType() const
 void Robot::setRobotType(RobotType robot_type)
 {
 	this->robot_type = robot_type;
+}
+BaseItem* Robot::getItem()
+{
+	return item;
+}
+BaseItem* Robot::setItem(BaseItem* item)
+{
+	this->item = item;
+}
+bool Robot::isFirstRobot()
+{
+	return (Robot::first_robot) ? true : false;
+}
+void Robot::setFirstRobot(bool boolean)
+{
+	Robot::first_robot = boolean;
 }
 
 RobotC::RobotC(int index, const Position& init_pos, Map* map, Criminal* criminal) : Robot(index, init_pos, map, "RobotC"), criminal(criminal)

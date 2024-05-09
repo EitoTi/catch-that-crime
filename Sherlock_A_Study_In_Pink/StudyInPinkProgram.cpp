@@ -20,17 +20,16 @@ int findMainNum(int n)
     }
     return sum;
 }
-
 StudyInPinkProgram::StudyInPinkProgram(const string &config_file_path)
 {
     config = new Configuration(config_file_path);
-    map = new Map(config->map_num_rows, config->map_num_cols, config->num_walls, config->arr_walls, config->num_fake_walls, config->arr_fake_walls);
+    map = new Map(this->config->map_num_rows, config->map_num_cols, config->num_walls, config->arr_walls, config->num_fake_walls, config->arr_fake_walls);
     sherlock = new Sherlock(1, config->sherlock_moving_rule, config->sherlock_init_pos, map, config->sherlock_init_hp, config->sherlock_init_exp);
     watson = new Watson(2, config->watson_moving_rule, config->watson_init_pos, map, config->watson_init_hp, config->watson_init_exp);
     criminal = new Criminal(0, config->criminal_init_pos, map, sherlock, watson);
     arr_mv_objs = new ArrayMovingObject(config->max_num_moving_objects);
-    sherlock_bag = new SherlockBag();
-    watson_bag = new WatsonBag();
+    sherlock_bag = new SherlockBag(sherlock);
+    watson_bag = new WatsonBag(watson);
     arr_mv_objs->add(criminal);
     arr_mv_objs->add(sherlock);
     arr_mv_objs->add(watson);
@@ -50,16 +49,16 @@ StudyInPinkProgram::~StudyInPinkProgram()
 
 bool StudyInPinkProgram::isStop() const
 {
-    if ((sherlock->getHp() == 0) || (watson->getHp() == 0) || sherlock->getCurrentPosition().isEqual(criminal->getCurrentPosition()) || watson->getCurrentPosition().isEqual(criminal->getCurrentPosition()))
+    if ((sherlock->getHp() == 0) || (watson->getHp() == 0) || sherlock->getCurrentPosition().isEqual(criminal->getCurrentPosition().getRow(), criminal->getCurrentPosition().getCol()) || watson->getCurrentPosition().isEqual(criminal->getCurrentPosition().getRow(), criminal->getCurrentPosition().getCol()))
         return true;
     return false;
 }
 
 void StudyInPinkProgram::printResult() const
 {
-    if (sherlock->getCurrentPosition().isEqual(criminal->getCurrentPosition()))
+    if (sherlock->getCurrentPosition().isEqual(criminal->getCurrentPosition().getRow(), criminal->getCurrentPosition().getCol()))
         cout << "Sherlock caught the criminal" << endl;
-    else if (watson->getCurrentPosition().isEqual(criminal->getCurrentPosition()))
+    else if (watson->getCurrentPosition().isEqual(criminal->getCurrentPosition().getRow(), criminal->getCurrentPosition().getCol()))
         cout << "Watson caught the criminal" << endl;
     else
         cout << "The criminal escaped" << endl;
@@ -76,19 +75,19 @@ void StudyInPinkProgram::run(bool verbose)
     {
         for (int j = 0; j < arr_mv_objs->getCount(); j++)
         {
-            MovingObject *obj = arr_mv_objs->get(j);
+            MovingObject *obj = arr_mv_objs->getMovingObectAtPosition(j);
             obj->move();
             if (obj->getName() == "Criminal")
             {
-                if (criminal->num_steps == 3)
+                if (criminal->getCriminalNumSteps() == 3)
                 {
                     Position criminal_pre_pos = criminal->getPreviousPosition();
                     Robot *robot = nullptr;
                     BaseItem *item = nullptr;
-                    if (Robot::first_robot)
+                    if (Robot::isFirstRobot())
                     {
                         robot = new RobotC(arr_mv_objs->getCount() + 1, criminal_pre_pos, map, criminal);
-                        Robot::first_robot = false;
+                        Robot::setFirstRobot(false);
                     }
                     else
                     {
@@ -133,12 +132,12 @@ void StudyInPinkProgram::run(bool verbose)
                     }
                     arr_mv_objs->add(robot);
                     robot->setItem(item);
-                    criminal->num_steps = 0;
+                    criminal->setCriminalNumSteps(0);
                 }
             }
             else if (obj->getName() == "Sherlock")
             {
-                if (sherlock->getCurrentPosition().isEqual(watson->getCurrentPosition()))
+                if (sherlock->getCurrentPosition().isEqual(watson->getCurrentPosition().getRow(), watson->getCurrentPosition().getCol()))
                 {
                     cout << "Meet";
                     BaseItem *exchange_item = sherlock_bag->get(PASSING_CARD);
@@ -157,18 +156,18 @@ void StudyInPinkProgram::run(bool verbose)
                 }
                 for (int k = 3; k < arr_mv_objs->getCount(); k++)
                 {
-                    if (sherlock->getCurrentPosition().isEqual(arr_mv_objs->get(k)->getCurrentPosition()))
+                    if (sherlock->getCurrentPosition().isEqual(arr_mv_objs->getMovingObectAtPosition(k)->getCurrentPosition().getRow(), arr_mv_objs->getMovingObectAtPosition(k)->getCurrentPosition().getCol()))
                     {
-                        Robot *robot = (Robot*)arr_mv_objs->get(k);
+                        Robot *robot = (Robot*)arr_mv_objs->getMovingObectAtPosition(k);
                         if (sherlock_bag->get(EXCEMPTION_CARD))
                             if (sherlock_bag->get(EXCEMPTION_CARD)->canUse(sherlock, robot))
-                                sherlock->god = true;
+                                sherlock->noModifyCharacterStats = true;
                         if (robot->getName() == "RobotS")
                         {
                             if (sherlock->getExp() > 400)
                                 sherlock_bag->insert(robot->getItem());
                             else
-                                if (!sherlock->god)
+                                if (!sherlock->noModifyCharacterStats)
                                     sherlock->setExp(sherlock->getExp() * 0.9);
                         }
                         else if (robot->getName() == "RobotW")
@@ -178,7 +177,7 @@ void StudyInPinkProgram::run(bool verbose)
                             if ((sherlock->getHp() > 335) && (sherlock->getExp() > 300))
                                 sherlock_bag->insert(robot->getItem());
                             else
-                                if (!sherlock->god)
+                                if (!sherlock->noModifyCharacterStats)
                                 {
                                     sherlock->setHp(sherlock->getHp() * 0.85);
                                     sherlock->setExp(sherlock->getExp() * 0.85);
@@ -197,13 +196,13 @@ void StudyInPinkProgram::run(bool verbose)
                                 item->use(sherlock, robot);
                         sherlock->roundHp();
                         sherlock->roundExp();
-                        sherlock->god = false;
+                        sherlock->noModifyCharacterStats = false;
                     }
                 }
             }
             else if (obj->getName() == "Watson")
             {
-                if (watson->getCurrentPosition().isEqual(sherlock->getCurrentPosition()))
+                if (watson->getCurrentPosition().isEqual(sherlock->getCurrentPosition().getRow(), sherlock->getCurrentPosition().getCol()))
                 {
                     BaseItem *exchange_item = watson_bag->get(EXCEMPTION_CARD);
                     while(exchange_item)
@@ -220,13 +219,13 @@ void StudyInPinkProgram::run(bool verbose)
                 }
                 for (int k = 3; k < arr_mv_objs->getCount(); k++)
                 {
-                    if (watson->getCurrentPosition().isEqual(arr_mv_objs->get(k)->getCurrentPosition()))
+                    if (watson->getCurrentPosition().isEqual(arr_mv_objs->getMovingObectAtPosition(k)->getCurrentPosition().getRow(), arr_mv_objs->getMovingObectAtPosition(k)->getCurrentPosition().getCol()))
                     {
-                        Robot *robot = (Robot*)arr_mv_objs->get(k);
+                        Robot *robot = (Robot*)arr_mv_objs->getMovingObectAtPosition(k);
                         if (watson_bag->get(PASSING_CARD))
                             if (watson_bag->get(PASSING_CARD)->canUse(watson, robot))
                                 watson_bag->get(PASSING_CARD)->use(watson, robot);
-                        if (watson->god)
+                        if (watson->noModifyCharacterStats)
                             watson_bag->insert(robot->getItem());
                         else
                         {
@@ -258,7 +257,7 @@ void StudyInPinkProgram::run(bool verbose)
                             watson->roundHp();
                             watson->roundExp();
                         }
-                        watson->god = false;
+                        watson->noModifyCharacterStats = false;
                     }
                 }
             }

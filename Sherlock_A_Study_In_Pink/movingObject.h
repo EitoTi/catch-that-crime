@@ -92,6 +92,8 @@ private:
 	int moving_rule_index = 0;
 	Sherlock* sherlock;
 	Watson* watson;
+	Position previous_pos;
+	int num_steps;
 public:
 	Criminal(int, const Position&, Map*, Sherlock*, Watson*);
 
@@ -101,6 +103,11 @@ public:
 	string getName() const;
 	int getHp() const;
 	int getExp() const;
+
+	Position getPreviousPosition() const;
+
+	int getCriminalNumSteps() const;
+	void setCriminalNumSteps(int);
 };
 
 class Robot : public MovingObject
@@ -108,6 +115,7 @@ class Robot : public MovingObject
 protected:
 	RobotType robot_type;
 	BaseItem* item;
+	static bool first_robot;
 
 	const string ToString(RobotType robot_type) const
 	{
@@ -138,6 +146,12 @@ public:
 	virtual void move() = 0;
 	virtual string str() const = 0;
 	virtual string getName() const = 0;
+
+	BaseItem* getItem();
+	BaseItem* setItem(BaseItem*);
+
+	static bool isFirstRobot();
+	static void setFirstRobot(bool);
 };
 
 class RobotC : public Robot

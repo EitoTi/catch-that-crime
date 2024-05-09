@@ -15,5 +15,7 @@ public:
 	bool add(MovingObject*);
 	string str() const;
 	int getCount();
+
+	MovingObject* getMovingObectAtPosition(int) const;
 };
 #endif // !_ARRAY_MOVING_OBJECT

@@ -1,4 +1,4 @@
-#include "..."
+#include "StudyInPinkProgram.h"
 
 using namespace std;
 
