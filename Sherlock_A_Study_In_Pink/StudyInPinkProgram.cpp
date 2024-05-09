@@ -25,15 +25,15 @@ StudyInPinkProgram::StudyInPinkProgram(const string &config_file_path)
 {
     config = new Configuration(config_file_path);
     map = new Map(config->map_num_rows, config->map_num_cols, config->num_walls, config->arr_walls, config->num_fake_walls, config->arr_fake_walls);
-    sherlock = new Sherlock(0, config->sherlock_moving_rule, config->sherlock_init_pos, map, config->sherlock_init_hp, config->sherlock_init_exp);
-    watson = new Watson(1, config->watson_moving_rule, config->watson_init_pos, map, config->watson_init_hp, config->watson_init_exp);
-    criminal = new Criminal(2, config->criminal_init_pos, map, sherlock, watson);
+    sherlock = new Sherlock(1, config->sherlock_moving_rule, config->sherlock_init_pos, map, config->sherlock_init_hp, config->sherlock_init_exp);
+    watson = new Watson(2, config->watson_moving_rule, config->watson_init_pos, map, config->watson_init_hp, config->watson_init_exp);
+    criminal = new Criminal(0, config->criminal_init_pos, map, sherlock, watson);
     arr_mv_objs = new ArrayMovingObject(config->max_num_moving_objects);
     sherlock_bag = new SherlockBag();
     watson_bag = new WatsonBag();
+    arr_mv_objs->add(criminal);
     arr_mv_objs->add(sherlock);
     arr_mv_objs->add(watson);
-    arr_mv_objs->add(criminal);
 }
 
 StudyInPinkProgram::~StudyInPinkProgram()
