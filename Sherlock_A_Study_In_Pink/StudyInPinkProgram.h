@@ -1,3 +1,4 @@
+int getDistance(Position pos1, Position pos2);
 int findMainNum(int n);
 
 class StudyInPinkProgram
