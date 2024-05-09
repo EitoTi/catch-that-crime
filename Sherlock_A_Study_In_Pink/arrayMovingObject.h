@@ -14,5 +14,6 @@ public:
 	bool isFull() const;
 	bool add(MovingObject*);
 	string str() const;
+	int getCount();
 };
 #endif // !_ARRAY_MOVING_OBJECT
