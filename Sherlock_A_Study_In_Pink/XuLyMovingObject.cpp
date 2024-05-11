@@ -129,6 +129,10 @@ int Sherlock::getExp() const
 {
 	return exp;
 }
+void Sherlock::setPos(const Position& pos)
+{
+	this->pos = pos;
+}
 
 Watson::Watson(int index, const string& moving_rule, const Position& init_pos, Map* map, int init_hp, int init_exp) : moving_rule(moving_rule), Character(index, init_pos, map, "Watson", init_hp, init_exp)
 {
@@ -203,6 +207,10 @@ int Watson::getHp() const
 int Watson::getExp() const
 {
 	return exp;
+}
+void Watson::setPos(const Position& pos)
+{
+	this->pos = pos;
 }
 
 Criminal::Criminal(int index, const Position& init_pos, Map* map, Sherlock* sherlock, Watson* watson) : sherlock(sherlock), watson(watson), Character(index, init_pos, map, "Criminal", 0, 0), num_steps(0) {}
@@ -319,6 +327,10 @@ void Criminal::setCriminalNumSteps(int steps)
 {
 	num_steps = steps;
 }
+void Criminal::setPos(const Position& pos)
+{
+	this->pos = pos;
+}
 
 bool Robot::first_robot = true;
 Robot::Robot(int index, const Position pos, Map* map, const string& name) : MovingObject(index, pos, map, name), robot_type(C), item(NULL) {}
@@ -347,7 +359,7 @@ BaseItem* Robot::getItem()
 {
 	return item;
 }
-BaseItem* Robot::setItem(BaseItem* item)
+void Robot::setItem(BaseItem* item)
 {
 	this->item = item;
 }
@@ -543,13 +555,13 @@ Position RobotSW::getNextPosition()
 
 	// Define the eight possible next positions
 	Position upPos(currentPos.getRow() - 2, currentPos.getCol());
-	Position upRightPos(currentPos.getRow() - 2, currentPos.getCol() + 2);
+	Position upRightPos(currentPos.getRow() - 1, currentPos.getCol() + 1);
 	Position rightPos(currentPos.getRow(), currentPos.getCol() + 2);
-	Position downRightPos(currentPos.getRow() + 2, currentPos.getCol() + 2);
+	Position downRightPos(currentPos.getRow() + 1, currentPos.getCol() + 1);
 	Position downPos(currentPos.getRow() + 2, currentPos.getCol());
-	Position downLeftPos(currentPos.getRow() + 2, currentPos.getCol() - 2);
+	Position downLeftPos(currentPos.getRow() + 1, currentPos.getCol() - 1);
 	Position leftPos(currentPos.getRow(), currentPos.getCol() - 2);
-	Position upLeftPos(currentPos.getRow() - 2, currentPos.getCol() - 2);
+	Position upLeftPos(currentPos.getRow() - 1, currentPos.getCol() - 1);
 
 	// Calculate the total Manhattan distance to Sherlock and Watson for each possible next position
 	int upDist = map->isValid(upPos, this) ? (ManhattanDistance(upPos, sherlockPos) + ManhattanDistance(upPos, watsonPos)) : INT_MAX;

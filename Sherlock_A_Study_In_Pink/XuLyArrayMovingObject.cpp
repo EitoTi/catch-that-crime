@@ -35,7 +35,7 @@ int ArrayMovingObject::getCount()
 {
 	return count;
 }
-MovingObject* ArrayMovingObject::getMovingObectAtPosition(int position) const
+MovingObject* ArrayMovingObject::getMovingObjectAtIndex(int index) const
 {
-	return arr_mv_objs[position];
+	return arr_mv_objs[index];
 }

@@ -16,6 +16,6 @@ public:
 	string str() const;
 	int getCount();
 
-	MovingObject* getMovingObectAtPosition(int) const;
+	MovingObject* getMovingObjectAtIndex(int) const;
 };
 #endif // !_ARRAY_MOVING_OBJECT

@@ -34,6 +34,10 @@ bool Position::isEqual(int in_r, int in_c) const
 {
 	return (r == in_r && c == in_c) ? true : false;
 }
+bool Position::isEqual(const Position& pos) const
+{
+	return (this->getRow() == pos.getRow() && this->getCol() == pos.getCol()) ? true : false;
+}
 const Position& Position::getNPos()
 {
 	return npos;
@@ -41,4 +45,9 @@ const Position& Position::getNPos()
 bool Position::operator!=(const Position& pos) const
 {
 	return ((this->getRow() != pos.getRow()) || (this->getCol() != pos.getCol())) ? true : false;
+}
+void Position::operator=(const Position& pos)
+{
+	this->r = pos.r;
+	this->c = pos.c;
 }

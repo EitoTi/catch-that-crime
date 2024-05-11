@@ -31,7 +31,7 @@ protected:
 	int hp;
 	int exp;
 public:
-	// noModifyCharacterStats -> cannot solve challenges, character stats is not modified
+	// noModifyCharacterStats -> cannot solve challenges, character stats are not modified (use for excemption_card in baseItem class)
 	// passChallenge -> no need to take the challenge 
 	bool noModifyCharacterStats = false, passChallenge = false;
 
@@ -51,6 +51,8 @@ public:
 	virtual void move() = 0;
 	virtual string str() const = 0;
 	virtual string getName() const = 0;
+
+	virtual void setPos(const Position&) = 0;
 };
 
 class Sherlock : public Character
@@ -67,6 +69,8 @@ public:
 	string getName() const;
 	int getHp() const;
 	int getExp() const;
+
+	void setPos(const Position&);
 };
 
 class Watson : public Character
@@ -83,6 +87,8 @@ public:
 	string getName() const;
 	int getHp() const;
 	int getExp() const;
+
+	void setPos(const Position&);
 };
 
 class Criminal : public Character
@@ -108,6 +114,8 @@ public:
 
 	int getCriminalNumSteps() const;
 	void setCriminalNumSteps(int);
+
+	void setPos(const Position&);
 };
 
 class Robot : public MovingObject
@@ -148,7 +156,7 @@ public:
 	virtual string getName() const = 0;
 
 	BaseItem* getItem();
-	BaseItem* setItem(BaseItem*);
+	void setItem(BaseItem*);
 
 	static bool isFirstRobot();
 	static void setFirstRobot(bool);

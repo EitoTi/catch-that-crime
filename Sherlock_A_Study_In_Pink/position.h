@@ -16,9 +16,12 @@ public:
 	void setCol(int);
 	string str() const;
 	bool isEqual(int, int) const;
+	bool isEqual(const Position&) const;
 
 	static const Position& getNPos();
 
-	bool operator!=(const Position&) const; // Operator Overload
+	// Operator Overload
+	bool operator!=(const Position&) const; 
+	void operator=(const Position&);
 };
 #endif // !_POSITION

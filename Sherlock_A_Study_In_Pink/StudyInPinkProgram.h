@@ -8,21 +8,30 @@
 #include "BaseBag.h"
 #include "baseItem.h"
 
-int getDistance(Position pos1, Position pos2);
-int findMainNum(int n);
 
 class StudyInPinkProgram
 {
-    friend class TestStudyInPink;
 private:
-    Configuration *config;
-    Sherlock *sherlock;
-    Watson *watson;
-    Criminal *criminal;
-    Map *map;
+    Configuration* config;
+    Sherlock* sherlock;
+    Watson* watson;
+    Criminal* criminal;
+    Map* map;
     ArrayMovingObject *arr_mv_objs;
     SherlockBag *sherlock_bag;
     WatsonBag *watson_bag;
+
+    int getDistance(Position, Position) const;
+
+    int findCardinalNumber(int) const;
+
+    // Process of creating robot basing on moving process of criminal
+    Robot* createRobot(Position);
+
+    BaseItem* robotHasItem(Position);
+
+    // Sherlock exchanges frist, then watson performs that
+    void exchangeItemProcess() const;
 public:
     StudyInPinkProgram(const string&);
     ~StudyInPinkProgram();
@@ -30,5 +39,6 @@ public:
     void printResult() const;
     void printStep(int) const;
     void run(bool);
+    friend class TestStudyInPink;
 };
 #endif // !_STUDY_IN_PINK
