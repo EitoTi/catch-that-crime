@@ -21,7 +21,7 @@ int StudyInPinkProgram::findCardinalNumber(int n) const
     return sum;
 }
 
-Robot* StudyInPinkProgram::createRobot(Position criminal_pre_pos)
+Robot* StudyInPinkProgram::createRobot(Position criminal_pre_pos) const
 {
     Robot* robot = NULL;
     if (Robot::isFirstRobot())
@@ -44,7 +44,7 @@ Robot* StudyInPinkProgram::createRobot(Position criminal_pre_pos)
     return robot;
 }
 
-BaseItem* StudyInPinkProgram::robotHasItem(Position criminal_pre_pos)
+BaseItem* StudyInPinkProgram::robotHasItem(Position criminal_pre_pos) const
 {
     BaseItem* robotHasItem = NULL;
     int n = findCardinalNumber(criminal_pre_pos.getRow() * criminal_pre_pos.getCol()); // find cardinal number of p = i * j
@@ -97,6 +97,162 @@ void StudyInPinkProgram::exchangeItemProcess() const
         sherlock_bag->insert(watson_exchange_item);
         watson_exchange_item = watson_bag->get(EXCEMPTION_CARD);
     }
+}
+
+void StudyInPinkProgram::sherlockMeetRobot(const int robotIndex) const
+{
+    // Sherlock meets Robot
+    if (sherlock->getCurrentPosition().isEqual(arr_mv_objs->getMovingObjectAtIndex(robotIndex)->getCurrentPosition()))
+    {
+        Robot* robot = (Robot*)arr_mv_objs->getMovingObjectAtIndex(robotIndex);
+        BaseItem* item = sherlock_bag->get(EXCEMPTION_CARD);
+        if (item != NULL && item->canUse(sherlock, NULL))
+            sherlock->noModifyCharacterStats = true; // Now sherlock can pass the robot's challenge and doesn't have changes to his stats 
+
+        int robotType = robot->getType(); // C = 0, S = 1, W = 2, SW = 3
+        switch (robotType)
+        {
+        case S:
+            if (sherlock->getExp() > 400)
+                sherlock_bag->insert(robot->getItem());
+            else
+                if (!sherlock->noModifyCharacterStats) // Sherlock doesn't have Excemption Card to pass the challenge
+                    sherlock->setExp(sherlock->getExp() * 0.9);
+            break;
+        case W:
+            sherlock_bag->insert(robot->getItem());
+            break;
+        case SW:
+            if ((sherlock->getHp() > 335) && (sherlock->getExp() > 300))
+                sherlock_bag->insert(robot->getItem());
+            else
+                if (!sherlock->noModifyCharacterStats)
+                {
+                    sherlock->setHp(sherlock->getHp() * 0.85);
+                    sherlock->setExp(sherlock->getExp() * 0.85);
+                }
+            break;
+        case C:
+            if (sherlock->getExp() > 500) // Sherlock catch the crime --> Program ends
+            {
+                sherlock->setPos(criminal->getCurrentPosition());
+                if (isStop())
+                {
+                    //printStep(step);
+                    //break;
+                    printResult();
+                    return;
+                }
+            }
+            else
+                sherlock_bag->insert(robot->getItem());
+            break;
+        default:
+            cout << "Invalid Robot Type!\n";
+            break;
+        }
+
+        // Find in sherlock bag to find items that can heal hp or increase exp after solving robot's challenge
+        item = sherlock_bag->get();
+        if (item != NULL && item->canUse(sherlock, NULL))
+            item->use(sherlock, NULL);
+
+        // Finish using Excemption Card -> set noModifyCharacterStats back to false
+        // if noModifyCharacterStats is true, 
+        // then sherlock can pass challenge and have no changes to his stats (exp, hp)
+        sherlock->noModifyCharacterStats = false;
+    }
+}
+
+void StudyInPinkProgram::watsonMeetRobot(const int robotIndex) const
+{
+    // Watson meets Robot
+    if (watson->getCurrentPosition().isEqual(arr_mv_objs->getMovingObjectAtIndex(robotIndex)->getCurrentPosition()))
+    {
+        Robot* robot = (Robot*)arr_mv_objs->getMovingObjectAtIndex(robotIndex);
+        BaseItem* item = watson_bag->get(PASSING_CARD);
+        if (item != NULL && item->canUse(watson, NULL))
+            item->use(watson, robot);
+
+        if (watson->passChallenge) // Passing Card helps pass the robot's challenge 
+            watson_bag->insert(robot->getItem());
+        else
+        {
+            int robotType = robot->getType(); // C = 0, S = 1, W = 2, SW = 3
+            switch (robotType)
+            {
+            case S:
+                break;
+            case W:
+                if (watson->getHp() > 350)
+                    watson_bag->insert(robot->getItem());
+                else
+                    watson->setHp(watson->getHp() * 0.95);
+                break;
+            case SW:
+                if ((watson->getHp() > 165) && (watson->getExp() > 600))
+                    watson_bag->insert(robot->getItem());
+                else
+                {
+                    watson->setHp(sherlock->getHp() * 0.85);
+                    watson->setExp(sherlock->getExp() * 0.85);
+                }
+                break;
+            case C:
+                watson_bag->insert(robot->getItem());
+                break;
+            default:
+                cout << "Invalid Robot Type!\n";
+                break;
+            }
+
+            // Find in watson bag to find items that can heal hp or increase exp after solving robot's challenge
+            item = watson_bag->get();
+            if (item != NULL && item->canUse(watson, NULL))
+                item->use(watson, NULL);
+        }
+        watson->passChallenge = false;
+    }
+}
+
+void StudyInPinkProgram::sherlockMeetWatson() const
+{
+    // Exchanging items when sherlock & watson meet
+    // The exchanged items are used for solving the robot's challenge
+    if (sherlock->getCurrentPosition().isEqual(watson->getCurrentPosition()))
+        exchangeItemProcess();
+}
+
+void StudyInPinkProgram::criminalStep() const
+{
+    Position criminal_pre_pos = criminal->getPreviousPosition();
+
+    Robot* robot = createRobot(criminal_pre_pos); // Create Robot
+    BaseItem* item = robotHasItem(criminal_pre_pos); // Item that robot contains
+
+    arr_mv_objs->add(robot);
+    robot->setItem(item);
+    criminal->setCriminalNumSteps(0);
+}
+
+void StudyInPinkProgram::sherlockStep() const
+{
+    // Sherlock and Watson meet
+    sherlockMeetWatson();
+
+    // Check if Sherlock meets Robot
+    for (int robotIndex = 3; robotIndex < arr_mv_objs->getCount(); robotIndex++) // Loop through all robots in arr_mv_objs starting from index 3
+        sherlockMeetRobot(robotIndex);
+}
+
+void StudyInPinkProgram::watsonStep() const
+{
+    // Sherlock and Watson meet
+    sherlockMeetWatson();
+
+    // Check if Sherlock meets Robot
+    for (int robotIndex = 3; robotIndex < arr_mv_objs->getCount(); robotIndex++) // Loop through all robots in arr_mv_objs starting from index 3
+        watsonMeetRobot(robotIndex);
 }
 
 StudyInPinkProgram::StudyInPinkProgram(const string &config_file_path)
@@ -157,146 +313,17 @@ void StudyInPinkProgram::run(bool verbose)
 
             // Create a robot every 3 steps of criminal
             if (obj->getName() == "Criminal" && criminal->getCriminalNumSteps() == 3)
-            {
-                Position criminal_pre_pos = criminal->getPreviousPosition();
-
-                Robot* robot = createRobot(criminal_pre_pos); // Create Robot
-                BaseItem* item = robotHasItem(criminal_pre_pos); // Item that robot contains
-
-                arr_mv_objs->add(robot);
-                robot->setItem(item);
-                criminal->setCriminalNumSteps(0);
-            }
+                criminalStep();
             else if (obj->getName() == "Sherlock")
-            {
-                // Exchanging items when sherlock & watson meet
-                // The exchanged items are used for solving the robot's challenge
-                if (sherlock->getCurrentPosition().isEqual(watson->getCurrentPosition()))
-                    exchangeItemProcess();
-
-                for (int k = 3; k < arr_mv_objs->getCount(); k++) // Loop through all robots in arr_mv_objs starting from index 3
-                {
-                    // Sherlock meets Robot
-                    if (sherlock->getCurrentPosition().isEqual(arr_mv_objs->getMovingObjectAtIndex(k)->getCurrentPosition()))
-                    {
-                        Robot* robot = (Robot*)arr_mv_objs->getMovingObjectAtIndex(k);
-                        BaseItem* item = sherlock_bag->get(EXCEMPTION_CARD);
-                        if (item != NULL && item->canUse(sherlock, NULL))
-                            sherlock->noModifyCharacterStats = true; // Now sherlock can pass the robot's challenge and doesn't have changes to his stats 
-                        
-                        int robotType = robot->getType(); // C = 0, S = 1, W = 2, SW = 3
-                        switch (robotType)
-                        {
-                        case S:
-                            if(sherlock->getExp() > 400)
-                                sherlock_bag->insert(robot->getItem());
-                            else 
-                                if (!sherlock->noModifyCharacterStats) // Sherlock doesn't have Exception Card to pass the challenge
-                                    sherlock->setExp(sherlock->getExp() * 0.9);
-                            break;
-                        case W:
-                            sherlock_bag->insert(robot->getItem());
-                            break;
-                        case SW:
-                            if ((sherlock->getHp() > 335) && (sherlock->getExp() > 300))
-                                sherlock_bag->insert(robot->getItem());
-                            else
-                                if (!sherlock->noModifyCharacterStats)
-                                {
-                                    sherlock->setHp(sherlock->getHp() * 0.85);
-                                    sherlock->setExp(sherlock->getExp() * 0.85);
-                                }
-                            break;
-                        case C:
-                            if (sherlock->getExp() > 500) // Sherlock catch the crime --> Program ends
-                            {
-                                sherlock->setPos(criminal->getCurrentPosition());
-                                if (isStop())
-                                {
-                                    //printStep(step);
-                                    //break;
-                                    printResult();
-                                    return;
-                                }
-                            }
-                            else
-                                sherlock_bag->insert(robot->getItem());
-                            break;
-                        default:
-                            cout << "Invalid Robot Type!\n";
-                            break;
-                        }
-                        
-                        // Find in sherlock bag to find items that can heal hp or increase exp after solving robot's challenge
-                        item = sherlock_bag->get();
-                        if (item != NULL && item->canUse(sherlock, NULL))
-                            item->use(sherlock, NULL);
-
-                        // Finish using Excemption Card -> set noModifyCharacterStats back to false
-                        // if noModifyCharacterStats is true, 
-                        // then sherlock can pass challenge and have no changes to his stats (exp, hp)
-                        sherlock->noModifyCharacterStats = false;
-                    }
-                }
-            }
+                sherlockStep();
             else if (obj->getName() == "Watson")
+                watsonStep();
+            else if ((arrayIndex >= 3 && arrayIndex < arr_mv_objs->getCount()) && (((Robot*)obj)->getType() == C || ((Robot*)obj)->getType() == S || ((Robot*)obj)->getType() == SW || ((Robot*)obj)->getType() == W))
             {
-                // Exchanging items when sherlock & watson meet
-                // The exchanged items are used for solving the robot's challenge
-                if (watson->getCurrentPosition().isEqual(sherlock->getCurrentPosition())) 
-                    exchangeItemProcess();
-
-                for (int k = 3; k < arr_mv_objs->getCount(); k++) // Loop through all robots in arr_mv_objs starting from index 3
-                {
-                    // Watson meets Robot
-                    if (watson->getCurrentPosition().isEqual(arr_mv_objs->getMovingObjectAtIndex(k)->getCurrentPosition()))
-                    {
-                        Robot *robot = (Robot*)arr_mv_objs->getMovingObjectAtIndex(k);
-                        BaseItem* item = watson_bag->get(PASSING_CARD);
-                        if (item != NULL && item->canUse(watson, NULL))
-                            item->use(watson, robot);
-
-                        if (watson->passChallenge) // Passing Card helps pass the robot's challenge 
-                            watson_bag->insert(robot->getItem());
-                        else
-                        {
-                            int robotType = robot->getType(); // C = 0, S = 1, W = 2, SW = 3
-                            switch (robotType)
-                            {
-                            case S:
-                                break;
-                            case W:
-                                if (watson->getHp() > 350)
-                                    watson_bag->insert(robot->getItem());
-                                else
-                                    watson->setHp(watson->getHp() * 0.95);
-                                break;
-                            case SW:
-                                if ((watson->getHp() > 165) && (watson->getExp() > 600))
-                                    watson_bag->insert(robot->getItem());
-                                else
-                                {
-                                    watson->setHp(sherlock->getHp() * 0.85);
-                                    watson->setExp(sherlock->getExp() * 0.85);
-                                }
-                                break;
-                            case C:
-                                watson_bag->insert(robot->getItem());
-                                break;
-                            default:
-                                cout << "Invalid Robot Type!\n";
-                                break;
-                            }
-
-                            // Find in watson bag to find items that can heal hp or increase exp after solving robot's challenge
-                            item = watson_bag->get();
-                            if (item != NULL && item->canUse(watson, NULL))
-                                item->use(watson, NULL);
-                        }
-                        watson->passChallenge = false;
-                    }
-                }
+                sherlockMeetRobot(arrayIndex);
+                watsonMeetRobot(arrayIndex);
             }
+
             if (isStop())
             {
                 //printStep(step);

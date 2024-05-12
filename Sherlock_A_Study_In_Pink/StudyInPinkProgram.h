@@ -26,12 +26,22 @@ private:
     int findCardinalNumber(int) const;
 
     // Process of creating robot basing on moving process of criminal
-    Robot* createRobot(Position);
+    Robot* createRobot(Position) const;
 
-    BaseItem* robotHasItem(Position);
+    BaseItem* robotHasItem(Position) const;
 
     // Sherlock exchanges frist, then watson performs that
     void exchangeItemProcess() const;
+
+    // Sherlock, Watson, Robot meet each other
+    void sherlockMeetRobot(const int) const;
+    void watsonMeetRobot(const int) const;
+    void sherlockMeetWatson() const;
+
+    // Criminal, Sherlock, Watson make a step
+    void criminalStep() const;
+    void sherlockStep() const;
+    void watsonStep() const;
 public:
     StudyInPinkProgram(const string&);
     ~StudyInPinkProgram();
