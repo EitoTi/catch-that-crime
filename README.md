@@ -37,6 +37,11 @@ See `Catch_That_Crime_Document.pdf` for more information.
    ```
 3. Move the extracted test case folder to Sherlock_A_Study_In_Pink folder and run the program
 
+<!-- LICENSE -->
+## License
+
+Distributed under the Apache License 2.0. See `LICENSE` for more information.
+<!-- Contact -->
 ## Contact
 Project Link: [https://github.com/FrogKnightz/Catch_That_Crime](https://github.com/FrogKnightz/Catch_That_Crime)
 
