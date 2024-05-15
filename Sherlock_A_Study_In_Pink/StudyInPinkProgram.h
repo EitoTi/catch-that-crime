@@ -17,9 +17,9 @@ private:
     Watson* watson;
     Criminal* criminal;
     Map* map;
-    ArrayMovingObject *arr_mv_objs;
-    SherlockBag *sherlock_bag;
-    WatsonBag *watson_bag;
+    ArrayMovingObject* arr_mv_objs;
+    SherlockBag* sherlock_bag;
+    WatsonBag* watson_bag;
 
     int getDistance(Position, Position) const;
 

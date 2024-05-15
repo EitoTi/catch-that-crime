@@ -134,16 +134,7 @@ void StudyInPinkProgram::sherlockMeetRobot(const int robotIndex) const
             break;
         case C:
             if (sherlock->getExp() > 500) // Sherlock catch the crime --> Program ends
-            {
                 sherlock->setPos(criminal->getCurrentPosition());
-                if (isStop())
-                {
-                    //printStep(step);
-                    //break;
-                    printResult();
-                    return;
-                }
-            }
             else
                 sherlock_bag->insert(robot->getItem());
             break;
@@ -169,6 +160,9 @@ void StudyInPinkProgram::watsonMeetRobot(const int robotIndex) const
     // Watson meets Robot
     if (watson->getCurrentPosition().isEqual(arr_mv_objs->getMovingObjectAtIndex(robotIndex)->getCurrentPosition()))
     {
+        /*cout << endl << "Watson hp: " << watson->getHp() << endl;
+        cout << "Watson exp: " << watson->getExp() << endl;
+        cout << "Watson bag before fighting robot: " << watson_bag->str() << endl;*/
         Robot* robot = (Robot*)arr_mv_objs->getMovingObjectAtIndex(robotIndex);
         BaseItem* item = watson_bag->get(PASSING_CARD);
         if (item != NULL && item->canUse(watson, NULL))
@@ -194,8 +188,8 @@ void StudyInPinkProgram::watsonMeetRobot(const int robotIndex) const
                     watson_bag->insert(robot->getItem());
                 else
                 {
-                    watson->setHp(sherlock->getHp() * 0.85);
-                    watson->setExp(sherlock->getExp() * 0.85);
+                    watson->setHp(watson->getHp() * 0.85);
+                    watson->setExp(watson->getExp() * 0.85);
                 }
                 break;
             case C:
@@ -205,6 +199,8 @@ void StudyInPinkProgram::watsonMeetRobot(const int robotIndex) const
                 cout << "Invalid Robot Type!\n";
                 break;
             }
+
+            //cout << "Watson bag after fighting robot: " << watson_bag->str() << endl;
 
             // Find in watson bag to find items that can heal hp or increase exp after solving robot's challenge
             item = watson_bag->get();
@@ -255,7 +251,7 @@ void StudyInPinkProgram::watsonStep() const
         watsonMeetRobot(robotIndex);
 }
 
-StudyInPinkProgram::StudyInPinkProgram(const string &config_file_path)
+StudyInPinkProgram::StudyInPinkProgram(const string& config_file_path)
 {
     config = new Configuration(config_file_path);
     map = new Map(this->config->map_num_rows, config->map_num_cols, config->num_walls, config->arr_walls, config->num_fake_walls, config->arr_fake_walls);
@@ -304,12 +300,18 @@ void StudyInPinkProgram::printStep(int si) const
 
 void StudyInPinkProgram::run(bool verbose)
 {
-    for (int step = 0; step <= config->num_steps; ++step)
+    for (int step = 0; step < config->num_steps; ++step)
     {
         for (int arrayIndex = 0; arrayIndex < arr_mv_objs->getCount(); ++arrayIndex)
         {
-            MovingObject *obj = arr_mv_objs->getMovingObjectAtIndex(arrayIndex);
+            /*cout << endl << "Array index = " << arrayIndex << endl;
+            if (step == 39)
+                cout << endl << arr_mv_objs->str() << endl;*/
+
+            MovingObject* obj = arr_mv_objs->getMovingObjectAtIndex(arrayIndex);
             obj->move(); // Also check for case of meeting Fake Wall here!
+
+            //cout << endl << "Object move!" << endl;
 
             // Create a robot every 3 steps of criminal
             if (obj->getName() == "Criminal" && criminal->getCriminalNumSteps() == 3)
@@ -317,7 +319,10 @@ void StudyInPinkProgram::run(bool verbose)
             else if (obj->getName() == "Sherlock")
                 sherlockStep();
             else if (obj->getName() == "Watson")
+            {
                 watsonStep();
+
+            }
             else if ((arrayIndex >= 3 && arrayIndex < arr_mv_objs->getCount()) && (((Robot*)obj)->getType() == C || ((Robot*)obj)->getType() == S || ((Robot*)obj)->getType() == SW || ((Robot*)obj)->getType() == W))
             {
                 sherlockMeetRobot(arrayIndex);
@@ -326,7 +331,7 @@ void StudyInPinkProgram::run(bool verbose)
 
             if (isStop())
             {
-                //printStep(step);
+                printStep(step);
                 //break;
                 printResult();
                 return;

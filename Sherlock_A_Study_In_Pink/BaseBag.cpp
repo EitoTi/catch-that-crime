@@ -1,6 +1,6 @@
 #include "BaseBag.h"
 
-BaseBag::BaseBag(Character* character) : character(character), items_count(0) 
+BaseBag::BaseBag(Character* character) : character(character), items_count(0)
 {
     for (int i = 0; i < 15; ++i)
         items[i] = NULL;
@@ -63,22 +63,22 @@ string BaseBag::str() const
     string result;
     if (items_count != 0)
     {
-        result = "Bag[count=" + to_string(items_count) + ";";
+        result = "BaseBag[count=" + to_string(items_count) + ";";
         for (int i = 0; i < items_count; ++i)
         {
             result += ToString(items[i]->getItemType());
-            
+
             if (i < items_count - 1)
                 result += ",";
         }
         result += "]";
     }
     else
-        result = "Empty string!";
+        result = "BaseBag[count=0]";
     return result;
 }
 
-SherlockBag::SherlockBag(Sherlock* sherlock): BaseBag(sherlock) {}
+SherlockBag::SherlockBag(Sherlock* sherlock) : BaseBag(sherlock) {}
 BaseItem* SherlockBag::get()
 {
     for (int i = 0; i < items_count; ++i)
@@ -123,8 +123,8 @@ BaseItem* SherlockBag::get(ItemType item_type)
     }
     return NULL;
 }
-bool SherlockBag::insert(BaseItem *item)
-{   
+bool SherlockBag::insert(BaseItem* item)
+{
     if (this->items_count < SHERLOCK_BAG_MAX_ITEM)
     {
         addToHead(*this, item);
@@ -178,7 +178,7 @@ BaseItem* WatsonBag::get(ItemType item_type)
     }
     return NULL;
 }
-bool WatsonBag::insert(BaseItem *item)
+bool WatsonBag::insert(BaseItem* item)
 {
     if (this->items_count < WATSON_BAG_MAX_ITEM)
     {

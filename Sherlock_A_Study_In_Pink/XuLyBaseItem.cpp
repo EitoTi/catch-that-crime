@@ -44,7 +44,7 @@ ItemType FirstAid::getItemType() const
 
 bool ExcemptionCard::canUse(Character* character, Robot* robot)
 {
-    return ((character->getName() == "Sherlock") && (character->getHp() % 2 == 1)) ? true : false;
+    return ((character->getName() == "Sherlock") && ((int)character->getHp() % 2 == 1)) ? true : false;
 }
 void ExcemptionCard::use(Character* character, Robot* robot)
 {
@@ -58,7 +58,7 @@ ItemType ExcemptionCard::getItemType() const
 PassingCard::PassingCard(const string& challenge): challenge(challenge) {}
 bool PassingCard::canUse(Character* character, Robot* robot)
 {
-    return ((character->getName() == "Watson") && (character->getHp() % 2 == 0)) ? true : false;
+    return ((character->getName() == "Watson") && ((int)character->getHp() % 2 == 0)) ? true : false;
 }
 void PassingCard::use(Character* character, Robot* robot)
 {

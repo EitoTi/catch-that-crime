@@ -2,105 +2,109 @@
 
 Configuration::Configuration(const string& filepath)
 {
-	ifstream fileInput(filepath);
-
-	if (fileInput.fail())
-		cout << "Failed to open this file!" << endl;
-
-	// Read each line of file
-	string property;
-	char tmp;
-	int tmpInt = 0;
-	while (!fileInput.eof())
-	{
-		char temp[255];
-		fileInput.getline(temp, 255);
-		string line = temp;
-
-		for (int i = 0; i < line.size(); ++i)
-			if (line[i] == '=')
-				line[i] = ' ';
-
-		stringstream sso(line);
-		sso >> property;
-
-		if (property == "MAP_NUM_ROWS")
-			sso >> map_num_rows;
-		else if (property == "MAP_NUM_COLS")
-			sso >> map_num_cols;
-		else if (property == "MAX_NUM_MOVING_OBJECTS")
-			sso >> max_num_moving_objects;
-		else if (property == "NUM_WALLS")
-			sso >> num_walls;
-		else if (property == "ARRAY_WALLS" || property == "ARRAY_FAKE_WALLS")
-		{
-			string array;
-			sso >> array;
-
-			// [(1,2);(2,3);(3,4)] --> remove '[' and ']'
-			array = array.substr(1, array.size() - 2);
-
-			stringstream ss(array);
-			string toaDo;
-			int size = (property == "ARRAY_WALLS") ? num_walls : num_fake_walls;
-			Position* positions = new Position[size];
-
-			// Tach string theo ';'
-			int i = 0;
-			while (getline(ss, toaDo, ';'))
-			{
-				// toaDo = (1,2)
-				Position pos(toaDo);
-				if (i < size)
-					positions[i++] = pos;
-			}
-
-			if (property == "ARRAY_WALLS")
-				arr_walls = positions;
-			else
-				arr_fake_walls = positions;
-		}
-		else if (property == "NUM_FAKE_WALLS")
-			sso >> num_fake_walls;
-		else if (property == "SHERLOCK_MOVING_RULE")
-			sso >> sherlock_moving_rule;
-		else if (property == "SHERLOCK_INIT_POS")
-		{
-			int r, c;
-			sso >> tmp >> r >> tmp >> c >> tmp;
-			sherlock_init_pos.setRow(r);
-			sherlock_init_pos.setCol(c);
-		}
-		else if (property == "SHERLOCK_INIT_HP")
-			sso >> sherlock_init_hp;
-		else if (property == "SHERLOCK_INIT_EXP")
-			sso >> sherlock_init_exp;
-		else if (property == "WATSON_MOVING_RULE")
-			sso >> watson_moving_rule;
-		else if (property == "WATSON_INIT_POS")
-		{
-			int r, c;
-			sso >> tmp >> r >> tmp >> c >> tmp;
-			watson_init_pos.setRow(r);
-			watson_init_pos.setCol(c);
-		}
-		else if (property == "WATSON_INIT_HP")
-			sso >> watson_init_hp;
-		else if (property == "WATSON_INIT_EXP")
-			sso >> watson_init_exp;
-		else if (property == "CRIMINAL_INIT_POS")
-		{
-			int r, c;
-			sso >> tmp >> r >> tmp >> c >> tmp;
-			criminal_init_pos.setRow(r);
-			criminal_init_pos.setCol(c);
-		}
-		else if (property == "NUM_STEPS")
-			sso >> num_steps;
-	}
-	cout << endl;
-
-	fileInput.close();
+    ifstream file(filepath);
+    if (!file.is_open())
+        cout << "Failed to open file!" << endl;
+    string str;
+    while (getline(file, str))
+    {
+        for (char& c : str)
+            if (c == '=')
+                c = ' ';
+        stringstream ss(str);
+        string property;
+        ss >> property;
+        if (property == "MAP_NUM_ROWS")
+            ss >> map_num_rows;
+        else if (property == "MAP_NUM_COLS")
+            ss >> map_num_cols;
+        else if (property == "MAX_NUM_MOVING_OBJECTS")
+            ss >> max_num_moving_objects;
+        else if (property == "ARRAY_WALLS")
+        {
+            string temp;
+            ss >> temp;
+            temp = temp.substr(1, temp.size() - 2);
+            for (char& c : temp)
+                if (c == ';')
+                    c = ' ';
+            stringstream arr(temp);
+            char discard;
+            int r, c;
+            int count = 0;
+            while (arr >> discard >> r >> discard >> c >> discard)
+                count++;
+            arr_walls = new Position[count];
+            arr.clear();
+            arr.seekg(0);
+            num_walls = count;
+            for (int i = 0; i < count; i++)
+            {
+                arr >> discard >> r >> discard >> c >> discard;
+                arr_walls[i] = Position(r, c);
+            }
+        }
+        else if (property == "ARRAY_FAKE_WALLS")
+        {
+            string temp;
+            ss >> temp;
+            temp = temp.substr(1, temp.size() - 2);
+            for (char& c : temp)
+                if (c == ';')
+                    c = ' ';
+            stringstream arr(temp);
+            char discard;
+            int r, c;
+            int count = 0;
+            while (arr >> discard >> r >> discard >> c >> discard)
+                count++;
+            arr_fake_walls = new Position[count];
+            arr.clear();
+            arr.seekg(0);
+            num_fake_walls = count;
+            for (int i = 0; i < count; i++)
+            {
+                arr >> discard >> r >> discard >> c >> discard;
+                arr_fake_walls[i] = Position(r, c);
+            }
+        }
+        else if (property == "SHERLOCK_MOVING_RULE")
+            ss >> sherlock_moving_rule;
+        else if (property == "SHERLOCK_INIT_POS")
+        {
+            int r, c;
+            char temp;
+            ss >> temp >> r >> temp >> c >> temp;
+            sherlock_init_pos = Position(r, c);
+        }
+        else if (property == "SHERLOCK_INIT_HP")
+            ss >> sherlock_init_hp;
+        else if (property == "SHERLOCK_INIT_EXP")
+            ss >> sherlock_init_exp;
+        else if (property == "WATSON_MOVING_RULE")
+            ss >> watson_moving_rule;
+        else if (property == "WATSON_INIT_POS")
+        {
+            int r, c;
+            char temp;
+            ss >> temp >> r >> temp >> c >> temp;
+            watson_init_pos = Position(r, c);
+        }
+        else if (property == "WATSON_INIT_HP")
+            ss >> watson_init_hp;
+        else if (property == "WATSON_INIT_EXP")
+            ss >> watson_init_exp;
+        else if (property == "CRIMINAL_INIT_POS")
+        {
+            int r, c;
+            char temp;
+            ss >> temp >> r >> temp >> c >> temp;
+            criminal_init_pos = Position(r, c);
+        }
+        else if (property == "NUM_STEPS")
+            ss >> num_steps;
+    }
+    file.close();
 }
 Configuration::~Configuration()
 {

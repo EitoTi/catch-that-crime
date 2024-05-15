@@ -11,7 +11,7 @@ Position MovingObject::getCurrentPosition() const
 	return pos;
 }
 
-Character::Character(int index, const Position pos, Map* map, const string& name, int hp, int exp) : MovingObject(index, pos, map, name), hp(hp), exp(exp)
+Character::Character(int index, const Position pos, Map* map, const string& name, int hp, int exp) : MovingObject(index, pos, map, name), hp(hp), exp(exp), canMove(true)
 {
 	// Xu ly hp
 	if (hp > 500)
@@ -31,11 +31,11 @@ Character::Character(int index, const Position pos, Map* map, const string& name
 }
 Character::~Character() {}
 
-void Character::setHp(int hp)
+void Character::setHp(double hp)
 {
     this->hp = hp;
 }
-void Character::setExp(int exp)
+void Character::setExp(double exp)
 {
     this->exp = exp;
 }
@@ -44,15 +44,25 @@ void Character::roundHp()
 {
     if (hp > 500)
         hp = 500;
-    else if (hp < 0)
+	else if (hp < 0)
+	{
         hp = 0;
+		canMove = false;
+	}
 }
 void Character::roundExp()
 {
     if (exp > 900)
         exp = 900;
-    else if (exp < 0)
+	else if (exp < 0)
+	{
         exp = 0;
+		canMove = false;
+	}
+}
+bool Character::getCanMove() const
+{
+	return canMove;
 }
 
 Sherlock::Sherlock(int index, const string& moving_rule, const Position& init_pos, Map* map, int init_hp, int init_exp) : moving_rule(moving_rule), Character(index, init_pos, map, "Sherlock", init_hp, init_exp)
@@ -107,7 +117,7 @@ void Sherlock::move()
 {
 	Position next_pos = getNextPosition();
 
-	if (next_pos != Position::getNPos())
+	if (next_pos != Position::getNPos() && getCanMove())
 		pos = next_pos;
 
 	// pos khong doi --> Sherlock dung im
@@ -121,11 +131,11 @@ string Sherlock::getName() const
 {
 	return name;
 }
-int Sherlock::getHp() const
+double Sherlock::getHp() const
 {
 	return hp;
 }
-int Sherlock::getExp() const
+double Sherlock::getExp() const
 {
 	return exp;
 }
@@ -186,7 +196,7 @@ void Watson::move()
 {
 	Position next_pos = getNextPosition();
 
-	if (next_pos != Position::getNPos())
+	if (next_pos != Position::getNPos() && getCanMove())
 		pos = next_pos;
 
 	// pos khong doi --> Watson dung im
@@ -200,11 +210,11 @@ string Watson::getName() const
 {
 	return name;
 }
-int Watson::getHp() const
+double Watson::getHp() const
 {
 	return hp;
 }
-int Watson::getExp() const
+double Watson::getExp() const
 {
 	return exp;
 }
@@ -222,6 +232,8 @@ Position Criminal::getNextPosition()
 	int maxDistance = -1;
 	int element = 0; // use for priorityDirection[]
 	char* priorityDirection = new char[4];
+	int index = 0;
+	int* Distance = new int[4];
 
 	// Tim potential position voi 'L', 'R', 'U', 'D'
 	for (char direction : {'L', 'R', 'U', 'D'})
@@ -254,37 +266,33 @@ Position Criminal::getNextPosition()
 		if (totalDistance > maxDistance)
 		{
 			maxDistance = totalDistance;
-			numNextPositions = 1;
-			nextPositions[0] = potentialPos;
-			priorityDirection[element] = direction;
+			nextPositions[numNextPositions++] = potentialPos;
+			priorityDirection[element++] = direction;
+			Distance[index++] = totalDistance;
 		}
 		else if (totalDistance == maxDistance)
 		{
 			nextPositions[numNextPositions++] = potentialPos;
-			priorityDirection[++element] = direction;
+			priorityDirection[element++] = direction;
+			Distance[index++] = totalDistance;
+		}
+		else if (totalDistance < maxDistance)
+		{
+			nextPositions[numNextPositions++] = potentialPos;
+			priorityDirection[element++] = direction;
+			Distance[index++] = totalDistance;
 		}
 	}
 
-	if (numNextPositions > 0 && numNextPositions < 2)
-	{
-		delete[] priorityDirection;
-		return nextPositions[0];
-	}
-	else if (numNextPositions > 1)
-	{
-		for (char direction : {'U', 'L', 'D', 'R'})
-			for (int i = 0; i < numNextPositions; ++i) // for (int i = 0, j = 0; i < numNextPositions && j < element + 1; ++i, ++j)
-				if (priorityDirection[i] == direction)
-				{
-					delete[] priorityDirection;
-					return nextPositions[i];
-				}
-	}
-	else
-	{
-		delete[] priorityDirection;
-		return Position::getNPos();
-	}
+	for(char direction : {'U', 'L', 'D', 'R'})
+		for(int i = 0; i < index; ++i)
+			if (maxDistance == Distance[i] && priorityDirection[i] == direction)
+			{
+				delete[] priorityDirection;
+				delete[] Distance;
+				return nextPositions[i];
+			}
+	return Position::getNPos();
 }
 void Criminal::move()
 {
@@ -307,11 +315,11 @@ string Criminal::getName() const
 {
 	return name;
 }
-int Criminal::getHp() const
+double Criminal::getHp() const
 {
 	return hp;
 }
-int Criminal::getExp() const
+double Criminal::getExp() const
 {
 	return exp;
 }
@@ -383,7 +391,7 @@ RobotC::~RobotC()
 }
 Position RobotC::getNextPosition()
 {
-	Position nextPos = criminal->getCurrentPosition();
+	Position nextPos = criminal->getPreviousPosition();
 	return (map->isValid(nextPos, this)) ? nextPos : Position::getNPos();
 }
 void RobotC::move()
@@ -394,7 +402,7 @@ void RobotC::move()
 }
 string RobotC::str() const
 {
-	return "Robot[pos=" + this->pos.str() + ";type=" + ToString(this->getType()) + "]";
+	return "Robot[pos=" + this->pos.str() + ";type=" + ToString(this->getType()) + ";dist=]";
 }
 string RobotC::getName() const
 {

@@ -27,9 +27,12 @@ public:
 
 class Character : public MovingObject
 {
+	// If Sherlock and Watson have invalid hp and exp -> canMove = false
+	// -> Sherlock and Watson cannot move to the nextPos
+	bool canMove;
 protected:
-	int hp;
-	int exp;
+	double hp;
+	double exp;
 public:
 	// noModifyCharacterStats -> cannot solve challenges, character stats are not modified (use for excemption_card in baseItem class)
 	// passChallenge -> no need to take the challenge 
@@ -38,11 +41,11 @@ public:
 	Character(int, const Position, Map*, const string&, int, int);
 	virtual ~Character();
 
-	virtual int getHp() const = 0;
-	virtual int getExp() const = 0;
+	virtual double getHp() const = 0;
+	virtual double getExp() const = 0;
 
-	void setHp(int);
-	void setExp(int);
+	void setHp(double);
+	void setExp(double);
 
 	void roundHp();
 	void roundExp();
@@ -53,6 +56,8 @@ public:
 	virtual string getName() const = 0;
 
 	virtual void setPos(const Position&) = 0;
+
+	bool getCanMove() const;
 };
 
 class Sherlock : public Character
@@ -67,8 +72,8 @@ public:
 	void move();
 	string str() const;
 	string getName() const;
-	int getHp() const;
-	int getExp() const;
+	double getHp() const;
+	double getExp() const;
 
 	void setPos(const Position&);
 };
@@ -85,8 +90,8 @@ public:
 	void move();
 	string str() const;
 	string getName() const;
-	int getHp() const;
-	int getExp() const;
+	double getHp() const;
+	double getExp() const;
 
 	void setPos(const Position&);
 };
@@ -107,8 +112,8 @@ public:
 	void move();
 	string str() const;
 	string getName() const;
-	int getHp() const;
-	int getExp() const;
+	double getHp() const;
+	double getExp() const;
 
 	Position getPreviousPosition() const;
 
