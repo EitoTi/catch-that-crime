@@ -35,7 +35,7 @@ See `Catch_That_Crime_Document.pdf` for more information.
    ```sh
    testcase.zip
    ```
-3. Move the extracted test case folder to Sherlock_A_Study_In_Pink folder and run the program
+3. Move the extracted test case folder to **Sherlock_A_Study_In_Pink folder** and run the program
 
 <!-- LICENSE -->
 ## License
