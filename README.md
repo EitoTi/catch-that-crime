@@ -24,7 +24,7 @@
 - By implementing various classes and and their interactions, this project reinforces concepts, including inheritance, polymorphism, abstraction, and encapsulation.
 
 ## Project Documentation
-See `Catch_That_Crime_Document.pdf` for more information.
+See [Catch_That_Crime_Document.pdf](./Catch_That_Crime_Document.pdf) for more information.
 
 ## Installation
 1. Clone the repo
