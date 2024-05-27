@@ -44,9 +44,6 @@ See [Catch_That_Crime_Document.pdf](./Catch_That_Crime_Document.pdf) for more in
 ## License
 
 Distributed under the MIT License. See `LICENSE.txt` for more information.
-<!-- Contact -->
-## Contact
-Project Link: [https://github.com/FrogKnightz/Catch_That_Crime](https://github.com/FrogKnightz/Catch_That_Crime)
 
 <p align="right">(<a href="#catch-that-crime">back to top</a>)</p>
 
