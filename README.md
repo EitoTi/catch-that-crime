@@ -1,22 +1,4 @@
 # Catch That Crime
-<!-- TABLE OF CONTENTS -->
-<details>
-  <summary>Table of Contents</summary>
-  <ol>
-    <li>
-      <a href="#about-the-project">About The Project</a>
-    </li>
-    <li>
-      <a href="#project-documentation">Project Documentation</a>
-    </li>
-    <li>
-      <a href="#installation">Installation</a>
-    </li>
-    <li>
-      <a href="#license">License</a>
-    </li>
-  </ol>
-</details>
 
 ## About The Project
 - This OOP project simulates the chase of Sherlock and Watson through a maze to catch a criminal, inspired by the BBC series "Sherlock."
